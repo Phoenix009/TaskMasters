@@ -4,5 +4,5 @@
   <li>Keshav Mishra </li>
   <li>Jaideep More</li>
   <li>Vedant Manelkar</li>
-  <li>Dhruv Panchal <li>
+  <li>Dhruv Panchal </li>
 </ul>
