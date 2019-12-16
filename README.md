@@ -3,6 +3,6 @@
 <ul>
   <li>Keshav Mishra </li>
   <li>Jaideep More</li>
-  <li>Vedant Manelkar (Team Leader)</li>
+  <li>Vedant Manelkar (Team Leader, President of India, UK, US)</li>
   <li>Dhruv Panchal </li>
 </ul>
