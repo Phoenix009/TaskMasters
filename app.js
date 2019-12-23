@@ -40,9 +40,11 @@ app.post("/", (req, res)=>{
     var query = "SELECT * FROM users WHERE email = '" +email + "' AND password = '" + password + "'";
     // res.send(query);
     connection.query(query,  (err, results, fields)=>{
-        if(!(results === undefined)){
+        if(results.length){
+            
             res.send("<h1>Logged in with " + results[0].email + "</h1>")
         }else{
+            // res.send("Incorrect login details");
             res.sendFile(__dirname + "/views/index.html");
         }
     }); 
