@@ -3,7 +3,13 @@ const app = express();
 const bodyParser = require("body-parser");
 const mysql = require("mysql");
 
-//mysql connection
+
+app.use(express.static("public"));
+app.use(bodyParser.urlencoded({extended: true}));
+
+
+
+
 var connection = mysql.createConnection({
     host:"localhost",
     user: "root",
@@ -11,16 +17,14 @@ var connection = mysql.createConnection({
     database: "StationaryInventorySystem"
 });
 
+//connection
 connection.connect(err=>{
     if(err) throw err;
     console.log("Connection established...");
 });
 
 
-app.use(express.static("public"));
-app.use(bodyParser.urlencoded({extended: true}));
-
-
+// --------------------------------------------------------------
 
 //Root Route
 app.get("/", (req, res)=>{
@@ -29,10 +33,16 @@ app.get("/", (req, res)=>{
 
 
 app.post("/", (req, res)=>{
-    var email = req.body.email;
-    var pass = req.body.pass;
 
-    
+    var data = {
+        email: req.body.email,
+        password: req.body.pass,
+    };
+
+    var query = "SELECT email FROM users WHERE ?" ;
+    connection.query(query, data, (err, results, fields)=>{
+        console.log(results);
+    });
     
 });
 
