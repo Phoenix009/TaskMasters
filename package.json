@@ -1,0 +1,22 @@
+{
+  "name": "taskmasters",
+  "version": "1.0.0",
+  "description": "<h2>Team Members</h2>\r <ul>\r   <li>Vedant Manelkar (Team Leader, King of the 7 Kingdoms, 1st of his name)</li>\r   <li>Keshav Mishra </li>\r   <li>Jaideep More</li>\r   <li>Dhruv Panchal </li>\r </ul>",
+  "main": "app.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Phoenix009/TaskMasters.git"
+  },
+  "author": "TaskMasters",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/Phoenix009/TaskMasters/issues"
+  },
+  "homepage": "https://github.com/Phoenix009/TaskMasters#readme",
+  "dependencies": {
+    "express": "^4.17.1"
+  }
+}
