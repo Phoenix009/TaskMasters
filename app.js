@@ -1,10 +1,11 @@
 const express = require("express");
 const app = express();
+app.use(express.static("public"));
 
 //Root Route
 app.get("/", (req, res)=>{
-    res.send("Home Page");
-});  
+    res.sendFile(__dirname + "/views/index.html");
+});
 
 
 
