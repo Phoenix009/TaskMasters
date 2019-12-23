@@ -34,15 +34,15 @@ app.get("/", (req, res)=>{
 
 app.post("/", (req, res)=>{
 
-    var data = {
-        email: req.body.email,
-        password: req.body.pass,
-    };
-
-    var query = "SELECT email FROM users WHERE ?" ;
-    connection.query(query, data, (err, results, fields)=>{
+    //user inputs
+    email = req.body.email;
+    password =  req.body.password;
+    var query = "SELECT * FROM users WHERE email = '" +email + "' AND password = '" + password + "'";
+    // res.send(query);
+    connection.query(query,  (err, results, fields)=>{
         console.log(results);
     });
+    
     
 });
 
