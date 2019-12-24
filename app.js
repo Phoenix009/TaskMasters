@@ -13,7 +13,7 @@ app.use(bodyParser.urlencoded({extended: true}));
 var connection = mysql.createConnection({
     host:"localhost",
     user: "root", //your username
-    password: "root",  // password
+    password: "phoenix",  // password
     database: "StationeryManager"
 });
 
@@ -57,6 +57,18 @@ app.get("/request", (req, res)=>{
         else{
             console.log(results);
             res.render("request", {"body": results});
+        }
+    })
+})
+
+
+app.get("/stocks", (req, res)=>{
+    var query = "SELECT * FROM stock";
+    connection.query(query, (err, results, body)=>{
+        if(err) throw err;
+        else{
+            console.log(results);
+            res.render("stocks", {"body": results});
         }
     })
 })

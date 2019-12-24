@@ -1,7 +1,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <meta http-equiv="X-UA-Compatible" content="ie=edge">
-<title>Requests</title>
+<title>Stock List</title>
 <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css"
     integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
 
@@ -17,8 +17,10 @@
     integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl" crossorigin="anonymous">
     </script>
 
+<script src="/js/stocks.js"></script>
+
 <!-- CSS LINK -->
-<link rel="stylesheet" href="/css/request.css">
+<link rel="stylesheet" href="/css/stocklist.css">
 
 
 <!-- HEADER -->
@@ -35,10 +37,10 @@
                 <li>
                     <h3>Stationery Inventory System</h3>
                 </li>
-                <li id="nav-item" class="nav-item">
+                <li id="nav-item" class="nav-item active">
                     <a class="nav-link" href="/stocks">Stocks </a>
                 </li>
-                <li class="nav-item active">
+                <li class="nav-item">
                     <a class="nav-link" href="/request">Requests</a>
                 </li>
             </ul>
@@ -50,34 +52,45 @@
 </header>
 
 <div class="mainhead">
-    <h3>Requests for Stationary</h3>
+    <h3>Stock List</h3>
 </div>
 
 
 
-<div class="container d-flex justify-content-center"  >
-    <div class="row col-md-12 col-md-offset-2 custyle" >
-    <table class="table table-striped custab" >
-    <thead>
-        <tr>
-            <th>Name</th>
-            <th>Item</th>
-            <th>Quantity</th>
-            <th>Timestamp</th>
-            <th class="text-center">Action</th>
-        </tr>
-    </thead>
-        <% body.forEach(element => { %>
-            <tr>
-                <td><%= element.fname + " " + element.lname %></td>
-                <td><%= element.item %></td>
-                <td>x5</td>
-                <td><%= element.date_time %></td>
-                <td class="text-center" ><a class='btn btn-success btn-xs' style="margin-right: 2rem;" href="#"><span class="glyphicon glyphicon-edit"></span> Accept</a> <a href="#" class="btn btn-danger btn-xs"><span class="glyphicon glyphicon-remove"></span> Delete</a></td>
-            </tr>
-        <% }); %>
-           
-    </table>
+<div class="container d-flex justify-content-center">
+    <div class="row col-md-12 col-md-offset-2 custyle">
+        <table class="table table-striped custab">
+            <thead>
+                <tr class="tr">
+                    <th style = "width: 2%;">Sr.No</th>
+                    <th style="width: 20%;">Stationery Items</th>
+                    <th>Qty<br>(previous sem)</th >
+                    <th>Stock in hand</th>
+                    <th>Quantity Required</th>
+                    <th>Qty<br>(present sem)</th>
+                    <th style="width: 20%;">Action</th>
+                </tr>
+            </thead>
+            <tbody>
+                <% body.forEach(element => { %>
+                    <tr>
+                        <td><%= element.id %></td>
+                        <td><%= element.item %></td>
+                        <td><%= element.qty_prev %></td>
+                        <td><%= element.avail %></td>
+                        <td><%= element.qty_req %></td>
+                        <td><%= element.qty_pres %></td>
+                        <td class="text-center">
+                            
+                        <a class='btn btn-info btn-xs' style="margin-right: 2rem;" href="#">
+                            <span class="glyphicon glyphicon-edit"></span> Add</a>
+                        <a href="#" class="btn btn-danger btn-xs">
+                            <span class="glyphicon glyphicon-remove"></span>Remove</a>
+                        </td>
+                    </tr>
+                <% }); %>
+            </tbody>
+        </table>
     </div>
 </div>
 
@@ -86,3 +99,5 @@
             href="https://github.com/Phoenix009/TaskMasters">Taskmasters</a> KJSIEIT ,Inc All rights reserved .
     </footer>
 </div>
+
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
