@@ -1,0 +1,28 @@
+
+/* SVV LOGO CSS */
+.svvlogo{
+    width:5rem;
+    margin: 0rem 2rem 0rem 2rem;
+}
+
+/* NAVBAR */
+#navbarSupportedContent{
+    text-align: right;
+    width: 100%;
+}
+#nav-item{
+    font-size: 2rem;
+    margin: 0 0 0 35rem;
+}
+.mybtn{
+    margin-right: 1rem;
+}
+.mybtn:hover{
+    background-color: black;
+}
+.footer{
+    text-align: center;
+}
+.mainhead{
+    text-align: center;
+}
