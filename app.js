@@ -28,7 +28,7 @@ connection.connect(err=>{
 
 //Root Route
 app.get("/", (req, res)=>{
-    res.sendFile(__dirname + "/views/index.html");
+    res.render(__dirname + "/views/index.ejs", {"err": false});
 });
 
 
@@ -41,8 +41,7 @@ app.post("/", (req, res)=>{
         if(results.length){
             res.send("<h1>Logged in with " + results[0].email + "</h1>")
         }else{
-            // res.send("Incorrect login details");
-            res.sendFile(__dirname + "/views/index.html");
+            res.render(__dirname + "/views/index.ejs", {"err": true});
         }
     }); 
     
