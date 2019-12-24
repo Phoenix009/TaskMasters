@@ -13,7 +13,7 @@ app.use(bodyParser.urlencoded({extended: true}));
 var connection = mysql.createConnection({
     host:"localhost",
     user: "root", //your username
-    password: "phoenix",  // password
+    password: "root",  // password
     database: "StationeryManager"
 });
 
