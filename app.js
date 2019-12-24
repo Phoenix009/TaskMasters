@@ -12,9 +12,9 @@ app.use(bodyParser.urlencoded({extended: true}));
 
 var connection = mysql.createConnection({
     host:"localhost",
-    user: "root",
-    password: "root",
-    database: "StationaryInventorySystem"
+    user: "root", //your username
+    password: "phoenix",  // password
+    database: "StationeryManager"
 });
 
 //connection
@@ -33,21 +33,19 @@ app.get("/", (req, res)=>{
 
 
 app.post("/", (req, res)=>{
-
     //user inputs
     email = req.body.email;
     password =  req.body.password;
-    var query = "SELECT * FROM users WHERE email = '" +email + "' AND password = '" + password + "'";
-    // res.send(query);
+    var query = "SELECT * FROM users WHERE email = '" +email + "' AND pass = '" + password + "'";
     connection.query(query,  (err, results, fields)=>{
         if(results.length){
-            
             res.send("<h1>Logged in with " + results[0].email + "</h1>")
         }else{
             // res.send("Incorrect login details");
             res.sendFile(__dirname + "/views/index.html");
         }
     }); 
+    
 });
 
 //default route
