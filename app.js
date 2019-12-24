@@ -50,6 +50,11 @@ app.post("/", (req, res)=>{
     }); 
 });
 
+//default route
+app.get("*", (req, res)=>{
+    res.send("Why are we here? Just to suffer ...");
+});
+
 
 app.listen(3000, ()=>{
     console.log("server running on port 3000");
