@@ -3,8 +3,8 @@ const app = express();
 const bodyParser = require("body-parser");
 const mysql = require("mysql");
 
-
-app.use(express.static("public"));
+app.set("view engine", "ejs");
+app.use(express.static(__dirname + "/public"));
 app.use(bodyParser.urlencoded({extended: true}));
 
 
@@ -28,7 +28,7 @@ connection.connect(err=>{
 
 //Root Route
 app.get("/", (req, res)=>{
-    res.render(__dirname + "/views/index.ejs", {"err": false});
+    res.render("index", {"err": false});
 });
 
 
@@ -41,11 +41,25 @@ app.post("/", (req, res)=>{
         if(results.length){
             res.send("<h1>Logged in with " + results[0].email + "</h1>")
         }else{
-            res.render(__dirname + "/views/index.ejs", {"err": true});
+            res.render("index", {"err": true});
         }
     }); 
     
 });
+
+app.get("/request", (req, res)=>{
+    var query = "SELECT fname, lname, item, date_time FROM users \
+    JOIN requests ON users.id=user_id \
+    JOIN stock on stock_id = stock.id;";
+    
+    connection.query(query, (err, results, body)=>{
+        if(err) throw err;
+        else{
+            console.log(results);
+            res.render("request", {"body": results});
+        }
+    })
+})
 
 //default route
 app.get("*", (req, res)=>{
