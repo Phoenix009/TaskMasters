@@ -6,20 +6,24 @@
 <link rel="stylesheet" href="/css/stocklist.css">
 <%- include('header2'); -%>
 
-<div class="mainhead">
-    <h3>Stock List</h3>
+
+<div class="row head">
+    <div class="mainhead col-md-12">
+        <h3>Stock List</h3>
+        <!-- <div class="search-box">
+            <input type="text" id="myInput" onkeyup="myFunction()" placeholder=" " /><span></span>
+        </div> -->
+    </div>
 </div>
-
-
-
 <div class="container d-flex justify-content-center">
     <div class="row col-md-12 col-md-offset-2 custyle">
-        <table class="table table-striped custab">
+
+        <table id="myTable" class="table table-striped custab">
             <thead>
                 <tr class="tr">
-                    <th style = "width: 2%;">Sr.No</th>
+                    <th style="width: 2%;">Sr.No</th>
                     <th style="width: 20%;">Stationery Items</th>
-                    <th>Qty<br>(previous sem)</th >
+                    <th>Qty<br>(previous sem)</th>
                     <th>Stock in hand</th>
                     <th>Quantity Required</th>
                     <th>Qty<br>(present sem)</th>
@@ -28,21 +32,20 @@
             </thead>
             <tbody>
                 <% body.forEach(element => { %>
-                    <tr>
-                        <td><%= element.id %></td>
-                        <td><%= element.item %></td>
-                        <td><%= element.qty_prev %></td>
-                        <td><%= element.avail %></td>
-                        <td><%= element.qty_req %></td>
-                        <td><%= element.qty_pres %></td>
-                        <td class="text-center">
-                            
+                <tr>
+                    <td><%= element.id %></td>
+                    <td><%= element.item %></td>
+                    <td><%= element.qty_prev %></td>
+                    <td><%= element.avail %></td>
+                    <td><%= element.qty_req %></td>
+                    <td><%= element.qty_pres %></td>
+                    <td style="width: 30%;" class="text-center">
                         <a class='btn btn-info btn-xs' style="margin-right: 2rem;" href="#">
-                            <span class="glyphicon glyphicon-edit"></span> Add</a>
+                            <span class="glyphicon glyphicon-edit"></span><i class="fas fa-plus"></i> Add</a>
                         <a href="#" class="btn btn-danger btn-xs">
-                            <span class="glyphicon glyphicon-remove"></span>Remove</a>
-                        </td>
-                    </tr>
+                            <span class="glyphicon glyphicon-remove"></span><i class="fas fa-minus"></i> Remove</a>
+                    </td>
+                </tr>
                 <% }); %>
             </tbody>
         </table>

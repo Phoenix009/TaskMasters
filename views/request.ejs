@@ -4,36 +4,42 @@
 <link rel="stylesheet" href="/css/request.css">
 <%- include('header2'); -%>
 
+<div class="row head">
+    <div class="mainhead col-md-12">
+        <h3>Requests for Stationary</h3>
+        <div class="search-box">
+            <input type="text" id="myInput" onkeyup="myFunction()" placeholder=" " /><span></span>
+        </div>
+    </div>
 
-<div class="mainhead">
-    <h3>Requests for Stationary</h3>
 </div>
-
-
-
-<div class="container d-flex justify-content-center"  >
-    <div class="row col-md-12 col-md-offset-2 custyle" >
-    <table class="table table-striped custab" >
-    <thead>
-        <tr>
-            <th>Name</th>
-            <th>Item</th>
-            <th>Quantity</th>
-            <th>Timestamp</th>
-            <th class="text-center">Action</th>
-        </tr>
-    </thead>
-        <% body.forEach(element => { %>
-            <tr>
-                <td><%= element.fname + " " + element.lname %></td>
-                <td><%= element.item %></td>
-                <td>x5</td>
-                <td><%= element.date_time %></td>
-                <td class="text-center" ><a class='btn btn-success btn-xs' style="margin-right: 2rem;" href="#"><span class="glyphicon glyphicon-edit"></span> Accept</a> <a href="#" class="btn btn-danger btn-xs"><span class="glyphicon glyphicon-remove"></span> Delete</a></td>
-            </tr>
-        <% }); %>
-           
-    </table>
+<div class="container d-flex justify-content-center">
+    <div class="row col-md-12 col-md-offset-2 custyle">
+        <table id="myTable" class="table table-list-search table-striped custab">
+            <thead>
+                <tr>
+                    <th>Name</th>
+                    <th>Item</th>
+                    <th>Quantity</th>
+                    <th>Timestamp</th>
+                    <th class="text-center">Action</th>
+                </tr>
+            </thead>
+            <tbody>
+                <% body.forEach(element => { %>
+                <tr>
+                    <td><%= element.fname + " " + element.lname %></td>
+                    <td><%= element.item %></td>
+                    <td>x5</td>
+                    <td><%= element.date_time %></td>
+                    <td class="text-center"><a class='btn btn-success btn-xs' style="margin-right: 2rem;" href="#"><span
+                                class="glyphicon glyphicon-edit"></span><i class="fas fa-check"></i> Accept</a> <a
+                            href="#" class="btn btn-danger btn-xs"><span class="glyphicon glyphicon-remove"></span> <i
+                                class="far fa-trash-alt"></i> Delete</a></td>
+                </tr>
+                <% }); %>
+            </tbody>
+        </table>
     </div>
 </div>
 
