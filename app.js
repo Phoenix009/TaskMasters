@@ -36,7 +36,7 @@ app.post("/", (req, res)=>{
     //user inputs
     email = req.body.email;
     password =  req.body.password;
-    var query = "SELECT * FROM users WHERE email = '" +email + "' AND pass = '" + password + "'";
+    var query = `SELECT * FROM users WHERE email = '${email}' and pass = '${pass}'`;
     connection.query(query,  (err, results, fields)=>{
         if(results.length){
             res.send("<h1>Logged in with " + results[0].email + "</h1>")
