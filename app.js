@@ -158,6 +158,26 @@ app.post("/register", (req, res)=>{
 });
 
 
+app.post("/add_item", (req, res)=>{
+    var data = {
+        item: req.body.item,
+        qty_prev: 0,
+        avail: req.body.stock,
+        qty_req: req.body.qty_req,
+        qty_pres: req.body.stock
+    };
+
+    var query = "INSERT INTO stock SET ?";
+    connection.query(query, data, (err, results, fields)=>{
+        if(err) throw err;
+        else{
+            console.log("Item added successfully");
+            res.redirect("stocks");
+        }
+    })
+})
+
+
 app.listen(3000, ()=>{
     console.log("server running on port 3000");
 });
