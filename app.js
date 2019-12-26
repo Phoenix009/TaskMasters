@@ -3,11 +3,12 @@ const app = express();
 const bodyParser = require("body-parser");
 const mysql = require("mysql");
 const bcrypt = require("bcryptjs");
+const session = require("express-session");
 
 app.set("view engine", "ejs");
 app.use(express.static(__dirname + "/public"));
 app.use(bodyParser.urlencoded({extended: true}));
-
+app.use(session({secret: "SomeSecret"}));
 
 //-------------- UTIL FUNCTIONS --------------
 function passwordHash(pass){
@@ -38,34 +39,43 @@ connection.connect(err=>{
 
 //-------------- GET ROUTES --------------
 app.get("/", (req, res)=>{
+    req.session.valid= false;
     res.render("index", {"err": false, "err_msg": ""});
 });
 
 
 app.get("/request", (req, res)=>{
-    var query = "SELECT fname, lname, item, date_time FROM users \
-    JOIN requests ON users.id=user_id \
-    JOIN stock on stock_id = stock.id;";
-    
-    connection.query(query, (err, results, body)=>{
-        if(err) throw err;
-        else{
-            console.log(results);
-            res.render("request", {"body": results});
-        }
-    })
+    if(req.session.valid){
+        var query = "SELECT fname, lname, item, date_time FROM users \
+        JOIN requests ON users.id=user_id \
+        JOIN stock on stock_id = stock.id;";
+        
+        connection.query(query, (err, results, body)=>{
+            if(err) throw err;
+            else{
+                console.log(results);
+                res.render("request", {"body": results});
+            }
+        })
+    }else{
+        res.render("index", {"err": false, "err_msg": ""});
+    }
 })
 
 
 app.get("/stocks", (req, res)=>{
-    var query = "SELECT * FROM stock";
-    connection.query(query, (err, results, body)=>{
-        if(err) throw err;
-        else{
-            console.log(results);
-            res.render("stocks", {"body": results});
-        }
-    })
+    if(req.session.valid){
+        var query = "SELECT * FROM stock";
+        connection.query(query, (err, results, body)=>{
+            if(err) throw err;
+            else{
+                console.log(results);
+                res.render("stocks", {"body": results});
+            }
+        })
+    }else{
+        res.render("index", {"err": false, "err_msg": ""});
+    }
 })
 
 
@@ -93,11 +103,14 @@ app.post("/login", (req, res)=>{
         else{
             if(results.length){
                 if(passwordMatch(password, results[0].pass)){
-                    res.send("Logged in with "+ email);
+                    req.session.valid = true;
+                    res.redirect("/request");
                 }else{
+                    req.session.valid = false;
                     res.render("index", {"err": true, "err_msg": "Passwords dont match"});
                 }
             }else{
+                req.session.valid = false;
                 res.render("index", {"err": true, "err_msg": "User Does not Exist"});
             }
         }
