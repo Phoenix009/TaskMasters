@@ -1,9 +1,5 @@
 
-/* SVV LOGO CSS */
-.svvlogo{
-    width:5rem;
-    margin: 0rem 2rem 0rem 2rem;
-}
+
 
 /* NAVBAR */
 #navbarSupportedContent{
@@ -32,4 +28,7 @@
 }
 .tr{
     text-align: center;
+}
+h4{
+    margin-left: 1rem;
 }

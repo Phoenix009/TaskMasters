@@ -42,6 +42,24 @@ app.get("/", (req, res)=>{
 });
 
 
+<<<<<<< HEAD
+=======
+app.post("/", (req, res)=>{
+    //user inputs
+    email = req.body.email;
+    password =  req.body.password;
+    var query = `SELECT * FROM users WHERE email = '${email}' and pass = '${pass}'`;
+    connection.query(query,  (err, results, fields)=>{
+        if(results.length){
+            res.send("<h1>Logged in with " + results[0].email + "</h1>")
+        }else{
+            res.render("index", {"err": true});
+        }
+    }); 
+    
+});
+
+>>>>>>> 5b365717dc730b4c24cb24bb02d7045d4dea8b67
 app.get("/request", (req, res)=>{
     var query = "SELECT fname, lname, item, date_time FROM users \
     JOIN requests ON users.id=user_id \
@@ -67,6 +85,7 @@ app.get("/stocks", (req, res)=>{
         }
     })
 })
+//edit profile route
 
 
 //-------------- DEFAULT ROUTE --------------
