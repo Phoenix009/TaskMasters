@@ -24,7 +24,7 @@ function passwordMatch(pass, hash){
 var connection = mysql.createConnection({
     host:"localhost",
     user: "root", //your username
-    password: "root",  // password
+    password: "phoenix",  // password
     database: "StationeryManager"
 });
 
@@ -42,8 +42,6 @@ app.get("/", (req, res)=>{
 });
 
 
-<<<<<<< HEAD
-=======
 app.post("/", (req, res)=>{
     //user inputs
     email = req.body.email;
@@ -59,7 +57,6 @@ app.post("/", (req, res)=>{
     
 });
 
->>>>>>> 5b365717dc730b4c24cb24bb02d7045d4dea8b67
 app.get("/request", (req, res)=>{
     var query = "SELECT fname, lname, item, date_time FROM users \
     JOIN requests ON users.id=user_id \
@@ -85,7 +82,11 @@ app.get("/stocks", (req, res)=>{
         }
     })
 })
-//edit profile route
+
+
+app.get("/edit", (req, res)=>{
+    res.render("edit", {err: false});
+})
 
 
 //-------------- DEFAULT ROUTE --------------
@@ -116,25 +117,44 @@ app.post("/login", (req, res)=>{
             }
         }
     });
-    
-    
 });
 
 
 app.post("/register", (req, res)=>{
     var data = {
         email: req.body.email,
-        pass: passwordHash(req.body.password),
+        prev_pass: req.body.prev_password,
+        new_pass: req.body.new_password,
+        c_pass: req.body.confirm_password,
     };
 
-    var query = "INSERT INTO users SET ?";
-    connection.query(query, data, (err, results, fields)=>{
+    var query = `SELECT * FROM users WHERE email = '${data.email}'`;
+    connection.query(query, (err, results, fields)=>{
         if(err) throw err;
         else{
-            console.log("User added successfully");
-            res.redirect("index");
+            if(results.length){
+                if(passwordMatch(data.prev_pass, results[0].pass)){
+                    if(data.new_pass === data.c_pass){
+                        var pass = passwordHash(data.new_pass);
+                        var query = `UPDATE users SET pass='${pass}' WHERE email='${data.email}'`;
+                        connection.query(query, (err, results, fields)=>{
+                            if(err) throw err;
+                            else{
+                                console.log("Profile updated successfully !!");
+                                res.redirect("/");
+                            }
+                        })
+                    }else{
+                        res.send("new Pass and c pass dont match")
+                    }
+                }else{
+                    res.send("!!Prev Password dont Match!!")
+                }
+            }else{
+                res.send("!! Email does not exists !!")
+            }
         }
-    });
+    })
 });
 
 
