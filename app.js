@@ -38,24 +38,9 @@ connection.connect(err=>{
 
 //-------------- GET ROUTES --------------
 app.get("/", (req, res)=>{
-    res.render("index", {"err": false});
+    res.render("index", {"err": false, "err_msg": ""});
 });
 
-
-app.post("/", (req, res)=>{
-    //user inputs
-    email = req.body.email;
-    password =  req.body.password;
-    var query = `SELECT * FROM users WHERE email = '${email}' and pass = '${pass}'`;
-    connection.query(query,  (err, results, fields)=>{
-        if(results.length){
-            res.send("<h1>Logged in with " + results[0].email + "</h1>")
-        }else{
-            res.render("index", {"err": true});
-        }
-    }); 
-    
-});
 
 app.get("/request", (req, res)=>{
     var query = "SELECT fname, lname, item, date_time FROM users \
@@ -110,10 +95,10 @@ app.post("/login", (req, res)=>{
                 if(passwordMatch(password, results[0].pass)){
                     res.send("Logged in with "+ email);
                 }else{
-                    res.send("Passwords dont match");
+                    res.render("index", {"err": true, "err_msg": "Passwords dont match"});
                 }
             }else{
-                res.send("User does not exist");
+                res.render("index", {"err": true, "err_msg": "User Does not Exist"});
             }
         }
     });
@@ -145,13 +130,13 @@ app.post("/register", (req, res)=>{
                             }
                         })
                     }else{
-                        res.send("new Pass and c pass dont match")
+                        res.render("edit", {"err": true, "err_msg": "New Password and Confirm Password don't match"});
                     }
                 }else{
-                    res.send("!!Prev Password dont Match!!")
+                    res.render("edit", {"err": true, "err_msg": " Previous Password does not Match "})
                 }
             }else{
-                res.send("!! Email does not exists !!")
+                res.render("edit", {"err": true, "err_msg": "Email does not exists"});
             }
         }
     })

@@ -24,20 +24,22 @@
 
 <div class="row">
     <div class="col-lg-12">
-        
-        <% if(err){ %>
-
-            <div class="alert alert-danger" role="alert">
-                !! Incorrect credentials !!
-            </div>
-
-            <% } %>
-
             <form class="form-signin text-center" action="/register" method="POST">
-        
+                
                 <img class="mb-4" src="images/svv.png" alt="" width="112">
+                
+                <h1 class="h3 mb-3  colors">KJ Somaiya Institute of Engineering and IT</h1>
+                <h1 class="h4 mb-3">Department of IT</h1>
+                <h3 class="h5 mb-3   font-weight-normal">Stationery Inventory System</h3>
+    
+                
                 <h1 class="h4 mb-4">Edit your profile</h1>
                 
+                <% if(err){ %>
+                    <div class="alert alert-danger" role="alert">
+                        <%=err_msg%>
+                    </div>
+                <% } %>
                 
                 <input type="email" name = "email" class="form-control top" placeholder="Email" required autofocus>
                 <input type="password" name = "prev_password" class="form-control middle" placeholder="Previous Password" required>
