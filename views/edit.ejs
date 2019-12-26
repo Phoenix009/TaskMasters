@@ -1,0 +1,53 @@
+<link rel="icon" href="/docs/4.0/assets/img/favicons/favicon.ico">
+
+<title>Edit Profile</title>
+
+<link rel="canonical" href="https://getbootstrap.com/docs/4.0/examples/sign-in/">
+
+<!-- Bootstrap core CSS -->
+<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css"
+    integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
+
+
+<!-- JavaScript and jQuery link -->
+<script src="https://code.jquery.com/jquery-3.2.1.slim.min.js"
+    integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN" crossorigin="anonymous">
+</script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js"
+    integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q" crossorigin="anonymous">
+</script>
+<script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js"
+    integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl" crossorigin="anonymous">
+</script>
+<!-- Custom styles for this template -->
+<link href="css/editProfile.css" rel="stylesheet">
+
+<div class="row">
+    <div class="col-lg-12">
+        
+        <% if(err){ %>
+
+            <div class="alert alert-danger" role="alert">
+                !! Incorrect credentials !!
+            </div>
+
+            <% } %>
+
+            <form class="form-signin text-center" action="/register" method="POST">
+        
+                <img class="mb-4" src="images/svv.png" alt="" width="112">
+                <h1 class="h4 mb-4">Edit your profile</h1>
+                
+                
+                <input type="email" name = "email" class="form-control top" placeholder="Email" required autofocus>
+                <input type="password" name = "prev_password" class="form-control middle" placeholder="Previous Password" required>
+                <input type="password" name = "new_password" class="form-control middle" placeholder="New Password" required>
+                <input type="password" name = "confirm_password" class="form-control bottom" placeholder="Confirm Password" required>
+                
+                <button class="btn btn-lg btn-primary btn-block" type="submit">Save Changes</button>
+            </form>
+    </div>
+    <div class="col-lg-12 text-center">
+        <%- include('footer');-%>
+    </div>
+</div>

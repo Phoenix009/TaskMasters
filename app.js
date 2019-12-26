@@ -72,6 +72,7 @@ app.get("/stocks", (req, res)=>{
         }
     })
 })
+//edit profile route
 
 //default route
 app.get("*", (req, res)=>{
