@@ -24,6 +24,7 @@
 }
 .mainhead{
     text-align: center;
+    margin-top: 2%;
 }
 .custab{
     border: 1px solid #ccc;
@@ -35,4 +36,4 @@
 .custab:hover{
     box-shadow: 3px 3px 0px transparent;
     transition: 0.5s;
-    }
+}
