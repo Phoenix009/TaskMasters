@@ -46,13 +46,25 @@ app.get("/", (req, res)=>{
 
 app.get("/request", (req, res)=>{
     if(req.session.valid){
-        var query = "SELECT fname, lname, item, date_time FROM users \
+        var query = "SELECT fname, lname, item, qty, date_time FROM users \
         JOIN requests ON users.id=user_id \
         JOIN stock on stock_id = stock.id;";
         
         connection.query(query, (err, results, body)=>{
             if(err) throw err;
             else{
+                var options={
+                    weekday: "short",
+                    year: "numeric",
+                    day: "numeric",
+                    hour: "numeric",
+                    minute: "numeric"
+                };
+
+                results.forEach(element => {
+                    var date = new Date(element.date_time);
+                    element.date_time = date.toLocaleDateString("en-US", options);
+                });
                 console.log(results);
                 res.render("request", {"body": results});
             }
