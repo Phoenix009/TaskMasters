@@ -25,7 +25,7 @@ function passwordMatch(pass, hash){
 var connection = mysql.createConnection({
     host:"localhost",
     user: "root", //your username
-    password: "root",  // password
+    password: "phoenix",  // password
     database: "StationeryManager"
 });
 
@@ -239,9 +239,6 @@ app.post("/edit_stocks", (req,res)=>{
     })
     
 });
-
-
-
 
 
 app.post("/logout", (req, res)=>{
