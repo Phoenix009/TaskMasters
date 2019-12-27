@@ -16,15 +16,15 @@
                                 <h5 class="display-4" style="font-size: 2rem">New Item Details</h5>
 
                                 <div class="form-group">
-                                    <input name="item" type="text" class="form-control" id="formGroupExampleInput"
+                                    <input name="item" type="text" class="form-control" 
                                         placeholder="ItemName">
                                 </div>
                                 <div class="form-group">
-                                    <input name="stock" type="number" class="form-control" id="formGroupExampleInput2"
+                                    <input name="stock" type="number" class="form-control" 
                                         placeholder="Stock in hand">
                                 </div>
                                 <div class="form-group">
-                                    <input name="qty_req" type="number" class="form-control" id="formGroupExampleInput2"
+                                    <input name="qty_req" type="number" class="form-control" 
                                         placeholder="Quantity required">
                                 </div>
                                 <button type="submit" class="btn btn-primary">Add</button>
@@ -46,13 +46,13 @@
         <table id="myTable" class="table table-list-search table-striped custab">
             <thead>
                 <tr>
-                    <th>Sr.No</th>
-                    <th>Stationery Item</th>
+                    <th >Sr.No</th>
+                    <th style = "width: 20%;">Stationery Item</th>
                     <th>Qty<br>(previous sem)</th>
-                    <th>Stock in hand</th>
-                    <th>Quantity required</th>
+                    <th >Stock in hand</th >
+                    <th >Quantity required</th >
                     <th>Qty<br>(present sem)</th>
-                    <th class="text-center">Action</th>
+                    <th class="text-center" >Action</th>
                 </tr>
             </thead>
             <tbody>
@@ -69,8 +69,8 @@
                         <td id="qty-req<%= element.id %>"><%= element.qty_req %></td>
                         <td><%= element.qty_pres %></td>
                         <td>    
-                            <button type="submit">Save</button>
-                            <input type="button" id="edit_button<%= element.id %>" value="Edit" class="edit"
+                            <button type="submit" class="btn btn-success" style="display: none;" id = "save_button<%= element.id %>">Save Changes</button>
+                            <input type="button" class="btn btn-outline-danger" id="edit_button<%= element.id %>" value="Edit items" class="edit"
                                 onclick="edit_row('<%= element.id %>')">
                         </td>
 
