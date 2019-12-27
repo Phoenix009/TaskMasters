@@ -39,7 +39,12 @@ connection.connect(err=>{
 
 //-------------- GET ROUTES --------------
 app.get("/", (req, res)=>{
-    req.session.valid= false;
+    try{
+        if(req.session.valid){
+        }
+    }catch(err){
+        req.session.valid = false;
+    }
     res.render("index", {"err": false, "err_msg": ""});
 });
 
@@ -213,6 +218,12 @@ app.post("/add_item", (req, res)=>{
             res.redirect("stocks");
         }
     })
+})
+
+
+app.post("/logout", (req, res)=>{
+    req.session.valid = false;
+    res.redirect("/");
 })
 
 
