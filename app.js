@@ -3,11 +3,12 @@ const app = express();
 const bodyParser = require("body-parser");
 const mysql = require("mysql");
 const bcrypt = require("bcryptjs");
+const session = require("express-session");
 
 app.set("view engine", "ejs");
 app.use(express.static(__dirname + "/public"));
 app.use(bodyParser.urlencoded({extended: true}));
-
+app.use(session({secret: "SomeSecret"}));
 
 //-------------- UTIL FUNCTIONS --------------
 function passwordHash(pass){
@@ -38,55 +39,89 @@ connection.connect(err=>{
 
 //-------------- GET ROUTES --------------
 app.get("/", (req, res)=>{
-    res.render("index", {"err": false});
+    req.session.valid= false;
+    res.render("index", {"err": false, "err_msg": ""});
 });
 
-
-app.post("/", (req, res)=>{
-    //user inputs
-    email = req.body.email;
-    password =  req.body.password;
-    var query = `SELECT * FROM users WHERE email = '${email}' and pass = '${pass}'`;
-    connection.query(query,  (err, results, fields)=>{
-        if(results.length){
-            res.send("<h1>Logged in with " + results[0].email + "</h1>")
-        }else{
-            res.render("index", {"err": true});
-        }
-    }); 
-    
-});
 
 app.get("/request", (req, res)=>{
-    var query = "SELECT fname, lname, item, date_time FROM users \
-    JOIN requests ON users.id=user_id \
-    JOIN stock on stock_id = stock.id;";
-    
-    connection.query(query, (err, results, body)=>{
-        if(err) throw err;
-        else{
-            console.log(results);
-            res.render("request", {"body": results});
-        }
-    })
+    if(req.session.valid){
+        var query = "SELECT requests.id AS req_id, stock.id AS stock_id, fname, lname, item, qty, date_time FROM users \
+        JOIN requests ON users.id=user_id \
+        JOIN stock on stock_id = stock.id;";
+        
+        connection.query(query, (err, results, body)=>{
+            if(err) throw err;
+            else{
+                var options={
+                    weekday: "short",
+                    year: "numeric",
+                    day: "numeric",
+                    hour: "numeric",
+                    minute: "numeric"
+                };
+
+                results.forEach(element => {
+                    var date = new Date(element.date_time);
+                    element.date_time = date.toLocaleDateString("en-US", options);
+                });
+                console.log(results);
+                res.render("request", {"body": results});
+            }
+        })
+    }else{
+        res.render("index", {"err": false, "err_msg": ""});
+    }
 })
 
 
 app.get("/stocks", (req, res)=>{
-    var query = "SELECT * FROM stock";
-    connection.query(query, (err, results, body)=>{
-        if(err) throw err;
-        else{
-            
-            res.render("stocks", {"body": results});
-        }
-    })
+    if(req.session.valid){
+        var query = "SELECT * FROM stock";
+        connection.query(query, (err, results, body)=>{
+            if(err) throw err;
+            else{
+                console.log(results);
+                res.render("stocks", {"body": results});
+            }
+        })
+    }else{
+        res.render("index", {"err": false, "err_msg": ""});
+    }
 })
 
 
 app.get("/edit", (req, res)=>{
     res.render("edit", {err: false});
-})
+});
+
+
+app.get("/edit_requests/:mode/:req_id/:stock_id/:qty", (req, res)=>{
+    var body = req.params;
+    if(body.mode === "accept"){
+        var stockQuery = `UPDATE stock SET avail= avail - ${body.qty} WHERE id=${body.stock_id}`;
+
+        console.log(stockQuery);
+        console.log(reqQuery);
+
+        connection.query(stockQuery, (err, results, fields)=>{
+            if(err) throw err;
+            else{
+                console.log("Stocks updated");
+            }
+        })
+    }
+    
+    var reqQuery = `DELETE FROM requests WHERE id=${body.req_id}`;
+
+    connection.query(reqQuery, (err, results, fields)=>{
+        if(err) throw err;
+        else{
+            console.log("Request deleted");
+        }
+    })
+    res.redirect("/request");
+});
 
 
 //-------------- DEFAULT ROUTE --------------
@@ -108,12 +143,15 @@ app.post("/login", (req, res)=>{
         else{
             if(results.length){
                 if(passwordMatch(password, results[0].pass)){
-                    res.send("Logged in with "+ email);
+                    req.session.valid = true;
+                    res.redirect("/request");
                 }else{
-                    res.send("Passwords dont match");
+                    req.session.valid = false;
+                    res.render("index", {"err": true, "err_msg": "Passwords dont match"});
                 }
             }else{
-                res.send("User does not exist");
+                req.session.valid = false;
+                res.render("index", {"err": true, "err_msg": "User Does not Exist"});
             }
         }
     });
@@ -145,13 +183,13 @@ app.post("/register", (req, res)=>{
                             }
                         })
                     }else{
-                        res.send("new Pass and c pass dont match")
+                        res.render("edit", {"err": true, "err_msg": "New Password and Confirm Password don't match"});
                     }
                 }else{
-                    res.send("!!Prev Password dont Match!!")
+                    res.render("edit", {"err": true, "err_msg": " Previous Password does not Match "})
                 }
             }else{
-                res.send("!! Email does not exists !!")
+                res.render("edit", {"err": true, "err_msg": "Email does not exists"});
             }
         }
     })
