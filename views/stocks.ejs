@@ -7,31 +7,35 @@
 <div class="row head">
     <div class="mainhead col-md-12">
         <h3 style="text-decoration: underline;">Stock List</h3>
-        <a class="btn btn-outline-primary" data-toggle="collapse" href="#multiCollapseExample1" role="button" aria-expanded="false" aria-controls="multiCollapseExample1" style="margin: 1%;">Click to add new Item</a>
+        <a class="btn btn-outline-primary" data-toggle="collapse" href="#multiCollapseExample1" role="button"
+            aria-expanded="false" aria-controls="multiCollapseExample1" style="margin: 1%;">Click to add new Item</a>
         <div class="row">
-              <div class="col">
-                  <div class="collapse multi-collapse" id="multiCollapseExample1"  style="margin: 2%;">
+            <div class="col">
+                <div class="collapse multi-collapse" id="multiCollapseExample1" style="margin: 2%;">
                     <div class="fluid container" style="width: 40%;">
                         <div class="card card-body">
-                              <form action="/add_item", method="POST">
+                            <form action="/add_item" , method="POST">
                                 <h5 class="display-4" style="font-size: 2rem">New Item Details</h5>
 
-                                  <div class="form-group">
-                                  <input name="item" type="text" class="form-control" id="formGroupExampleInput" placeholder="ItemName">
-                                  </div>
-                                  <div class="form-group">
-                                  <input name="stock" type="number" class="form-control" id="formGroupExampleInput2" placeholder="Stock in hand">
-                                  </div>
-                                  <div class="form-group">
-                                      <input name="qty_req" type="number" class="form-control" id="formGroupExampleInput2" placeholder="Quantity required">
-                                  </div>
-                                  <button type="submit" class="btn btn-primary">Add</button>
-                              </form>
+                                <div class="form-group">
+                                    <input name="item" type="text" class="form-control" id="formGroupExampleInput"
+                                        placeholder="ItemName">
+                                </div>
+                                <div class="form-group">
+                                    <input name="stock" type="number" class="form-control" id="formGroupExampleInput2"
+                                        placeholder="Stock in hand">
+                                </div>
+                                <div class="form-group">
+                                    <input name="qty_req" type="number" class="form-control" id="formGroupExampleInput2"
+                                        placeholder="Quantity required">
+                                </div>
+                                <button type="submit" class="btn btn-primary">Add</button>
+                            </form>
                         </div>
                     </div>
                 </div>
             </div>
-        </div>                   
+        </div>
         <!-- <div class="search-box">
             <input type="text" id="myInput" onkeyup="myFunction()" placeholder=" " /><span></span>
         </div> -->
@@ -40,6 +44,7 @@
 </div>
 <div class="container d-flex justify-content-center">
     <div class="row col-md-12 col-md-offset-2 custyle">
+        <form action="/edit_stocks" method="POST">
         <table id="myTable" class="table table-list-search table-striped custab">
             <thead>
                 <tr>
@@ -54,20 +59,28 @@
             </thead>
             <tbody>
                 <% body.forEach(element => { %>
-                <tr>
-                    <td><%= element.id %></td>
-                    <td><%= element.item %></td>
-                    <td><%= element.qty_prev %></td>
-                    <td><%= element.avail %></td>
-                    <td><%= element.qty_req %></td>
-                    <td><%= element.qty_pres %></td>
-                    <td class="text-center"><a class='btn btn-success btn-xs' style="margin-right: 2rem;" href="#"><span
-                                class="glyphicon glyphicon-edit"></span>Edit <i class="fas fa-pencil-alt"></i></a> <a
-                            href="#" class="btn btn-danger btn-xs"><span class="glyphicon glyphicon-remove"></span> <i
-                                class="far fa-trash-alt"></i> Delete</a></td>
-                </tr>
+                
+                
+                    
+                    <tr id="row<%= element.id %>">
+
+                        <td id="<%=element.id%>"><%= element.id %></td>
+                        <td id="item<%= element.id  %>"><%= element.item %></td>
+                        <td><%= element.qty_prev %></td>
+                        <td id="avail<%= element.id %>"><%= element.avail %></td>
+                        <td id="qty-req<%= element.id %>"><%= element.qty_req %></td>
+                        <td><%= element.qty_pres %></td>
+                        <td>    
+                            <button type="submit">Save</button>
+                            <input type="button" id="edit_button<%= element.id %>" value="Edit" class="edit"
+                                onclick="edit_row('<%= element.id %>')">
+                        </td>
+
+                    </tr>
+                
                 <% }); %>
             </tbody>
+        </form>
         </table>
     </div>
 </div>

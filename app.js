@@ -24,7 +24,7 @@ function passwordMatch(pass, hash){
 var connection = mysql.createConnection({
     host:"localhost",
     user: "root", //your username
-    password: "phoenix",  // password
+    password: "root",  // password
     database: "StationeryManager"
 });
 
@@ -77,7 +77,7 @@ app.get("/stocks", (req, res)=>{
     connection.query(query, (err, results, body)=>{
         if(err) throw err;
         else{
-            console.log(results);
+            
             res.render("stocks", {"body": results});
         }
     })
@@ -176,6 +176,29 @@ app.post("/add_item", (req, res)=>{
         }
     })
 })
+
+app.post("/edit_stocks", (req,res)=>{
+    console.log("Just entered edit stocks");
+    var data = {
+        id : Number(req.body.id),
+        item: req.body.item_text,
+        avail: Number(req.body.avail_text),
+        qty_req: Number(req.body.qty_text),
+    };
+    
+    var query = `UPDATE stock SET item = '${data.item}', avail = ${data.avail}, qty_req = ${data.qty_req} WHERE id = ${data.id}`;
+    connection.query(query, (err, results, fields)=>{
+        if(err) throw err;
+        else{
+            console.log("Item updated successfully");
+            res.redirect("stocks");
+        }
+    })
+    
+});
+
+
+
 
 
 app.listen(3000, ()=>{
