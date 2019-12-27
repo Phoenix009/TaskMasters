@@ -7,58 +7,64 @@ const session = require("express-session");
 
 app.set("view engine", "ejs");
 app.use(express.static(__dirname + "/public"));
-app.use(bodyParser.urlencoded({extended: true}));
-app.use(session({secret: "SomeSecret"}));
+app.use(bodyParser.urlencoded({
+    extended: true
+}));
+app.use(session({
+    secret: "SomeSecret"
+}));
 
 //-------------- UTIL FUNCTIONS --------------
-function passwordHash(pass){
+function passwordHash(pass) {
     var salt = bcrypt.genSaltSync(10);
     var hash = bcrypt.hashSync(pass, salt);
     return hash;
 }
 
-function passwordMatch(pass, hash){
+function passwordMatch(pass, hash) {
     return bcrypt.compareSync(pass, hash);
 }
 
 
 var connection = mysql.createConnection({
-    host:"localhost",
+    host: "localhost",
     user: "root", //your username
-    password: "root",  // password
+    password: "root", // password
     database: "StationeryManager"
 });
 
 
 //connection
-connection.connect(err=>{
-    if(err) throw err;
+connection.connect(err => {
+    if (err) throw err;
     console.log("Connection established...");
 });
 
 
 //-------------- GET ROUTES --------------
-app.get("/", (req, res)=>{
-    try{
-        if(req.session.valid){
-        }
-    }catch(err){
+app.get("/", (req, res) => {
+    try {
+        if (req.session.valid) {}
+    } catch (err) {
         req.session.valid = false;
     }
-    res.render("index", {"err": false, "err_msg": ""});
+    res.render("index", {
+        "err": false,
+        "err_msg": ""
+    });
 });
 
 
-app.get("/request", (req, res)=>{
-    if(req.session.valid){
+app.get("/request", (req, res) => {
+    if (req.session.valid) {
         var query = "SELECT requests.id AS req_id, stock.id AS stock_id, fname, lname, item, qty, date_time FROM users \
         JOIN requests ON users.id=user_id \
         JOIN stock on stock_id = stock.id;";
-        
-        connection.query(query, (err, results, body)=>{
-            if(err) throw err;
-            else{
-                var options={
+
+        connection.query(query, (err, results, body) => {
+            if (err) throw err;
+            else {
+                var options = {
                     weekday: "short",
                     year: "numeric",
                     day: "numeric",
@@ -71,57 +77,76 @@ app.get("/request", (req, res)=>{
                     element.date_time = date.toLocaleDateString("en-US", options);
                 });
                 console.log(results);
-                res.render("request", {"body": results});
+                res.render("request", {
+                    "body": results
+                });
             }
         })
-    }else{
-        res.render("index", {"err": false, "err_msg": ""});
+    } else {
+        res.render("index", {
+            "err": false,
+            "err_msg": ""
+        });
     }
 })
 
 
-app.get("/stocks", (req, res)=>{
-    if(req.session.valid){
+app.get("/stocks", (req, res) => {
+    if (req.session.valid) {
         var query = "SELECT * FROM stock";
-        connection.query(query, (err, results, body)=>{
-            if(err) throw err;
-            else{
+        connection.query(query, (err, results, body) => {
+            if (err) throw err;
+            else {
                 console.log(results);
-                res.render("stocks", {"body": results});
+                res.render("stocks", {
+                    "body": results
+                });
             }
         })
-    }else{
-        res.render("index", {"err": false, "err_msg": ""});
+    } else {
+        res.render("index", {
+            "err": false,
+            "err_msg": ""
+        });
     }
 })
 
 
-app.get("/edit", (req, res)=>{
-    res.render("edit", {err: false});
+app.get("/edit", (req, res) => {
+    if (req.session.valid) {
+        res.render("edit", {
+            err: false
+        });
+    } else {
+        res.render("index", {
+            "err": false,
+            "err_msg": ""
+        });
+    }
 });
 
 
-app.get("/edit_requests/:mode/:req_id/:stock_id/:qty", (req, res)=>{
+app.get("/edit_requests/:mode/:req_id/:stock_id/:qty", (req, res) => {
     var body = req.params;
-    if(body.mode === "accept"){
+    if (body.mode === "accept") {
         var stockQuery = `UPDATE stock SET avail= avail - ${body.qty} WHERE id=${body.stock_id}`;
 
         console.log(stockQuery);
         console.log(reqQuery);
 
-        connection.query(stockQuery, (err, results, fields)=>{
-            if(err) throw err;
-            else{
+        connection.query(stockQuery, (err, results, fields) => {
+            if (err) throw err;
+            else {
                 console.log("Stocks updated");
             }
         })
     }
-    
+
     var reqQuery = `DELETE FROM requests WHERE id=${body.req_id}`;
 
-    connection.query(reqQuery, (err, results, fields)=>{
-        if(err) throw err;
-        else{
+    connection.query(reqQuery, (err, results, fields) => {
+        if (err) throw err;
+        else {
             console.log("Request deleted");
         }
     })
@@ -130,7 +155,7 @@ app.get("/edit_requests/:mode/:req_id/:stock_id/:qty", (req, res)=>{
 
 
 //-------------- DEFAULT ROUTE --------------
-app.get("*", (req, res)=>{
+app.get("*", (req, res) => {
     res.send("Why are we here? Just to suffer ...");
 });
 
@@ -138,32 +163,39 @@ app.get("*", (req, res)=>{
 
 //-------------- POST ROUTES --------------
 
-app.post("/login", (req, res)=>{
+app.post("/login", (req, res) => {
     email = req.body.email;
-    password =  req.body.password;
+    password = req.body.password;
 
     var query = `SELECT * FROM users WHERE email='${email}';`;
-    connection.query(query, (err, results, fields)=>{
-        if(err) throw err;
-        else{
-            if(results.length){
-                if(passwordMatch(password, results[0].pass)){
+    connection.query(query, (err, results, fields) => {
+        if (err) throw err;
+        else {
+            if (results.length) {
+                if (passwordMatch(password, results[0].pass)) {
                     req.session.valid = true;
+                    // req.session.id = results[0].id;
                     res.redirect("/request");
-                }else{
+                } else {
                     req.session.valid = false;
-                    res.render("index", {"err": true, "err_msg": "Passwords dont match"});
+                    res.render("index", {
+                        "err": true,
+                        "err_msg": "Passwords dont match"
+                    });
                 }
-            }else{
+            } else {
                 req.session.valid = false;
-                res.render("index", {"err": true, "err_msg": "User Does not Exist"});
+                res.render("index", {
+                    "err": true,
+                    "err_msg": "User Does not Exist"
+                });
             }
         }
     });
 });
 
 
-app.post("/register", (req, res)=>{
+app.post("/register", (req, res) => {
     var data = {
         email: req.body.email,
         prev_pass: req.body.prev_password,
@@ -172,36 +204,45 @@ app.post("/register", (req, res)=>{
     };
 
     var query = `SELECT * FROM users WHERE email = '${data.email}'`;
-    connection.query(query, (err, results, fields)=>{
-        if(err) throw err;
-        else{
-            if(results.length){
-                if(passwordMatch(data.prev_pass, results[0].pass)){
-                    if(data.new_pass === data.c_pass){
+    connection.query(query, (err, results, fields) => {
+        if (err) throw err;
+        else {
+            if (results.length) {
+                if (passwordMatch(data.prev_pass, results[0].pass)) {
+                    if (data.new_pass === data.c_pass) {
                         var pass = passwordHash(data.new_pass);
                         var query = `UPDATE users SET pass='${pass}' WHERE email='${data.email}'`;
-                        connection.query(query, (err, results, fields)=>{
-                            if(err) throw err;
-                            else{
+                        connection.query(query, (err, results, fields) => {
+                            if (err) throw err;
+                            else {
                                 console.log("Profile updated successfully !!");
                                 res.redirect("/");
                             }
                         })
-                    }else{
-                        res.render("edit", {"err": true, "err_msg": "New Password and Confirm Password don't match"});
+                    } else {
+                        res.render("edit", {
+                            "err": true,
+                            "err_msg": "New Password and Confirm Password don't match"
+                        });
                     }
-                }else{
-                    res.render("edit", {"err": true, "err_msg": " Previous Password does not Match "})
+                } else {
+                    res.render("edit", {
+                        "err": true,
+                        "err_msg": " Previous Password does not Match "
+                    })
                 }
-            }else{
-                res.render("edit", {"err": true, "err_msg": "Email does not exists"});
+            } else {
+                res.render("edit", {
+                    "err": true,
+                    "err_msg": "Email does not exists"
+                });
             }
         }
     })
 });
 
 
-app.post("/add_item", (req, res)=>{
+app.post("/add_item", (req, res) => {
     var data = {
         item: req.body.item,
         qty_prev: 0,
@@ -211,42 +252,42 @@ app.post("/add_item", (req, res)=>{
     };
 
     var query = "INSERT INTO stock SET ?";
-    connection.query(query, data, (err, results, fields)=>{
-        if(err) throw err;
-        else{
+    connection.query(query, data, (err, results, fields) => {
+        if (err) throw err;
+        else {
             console.log("Item added successfully");
             res.redirect("stocks");
         }
     })
 })
 
-app.post("/edit_stocks", (req,res)=>{
+app.post("/edit_stocks", (req, res) => {
     console.log("Just entered edit stocks");
     var data = {
-        id : Number(req.body.id),
+        id: Number(req.body.id),
         item: req.body.item_text,
         avail: Number(req.body.avail_text),
         qty_req: Number(req.body.qty_text),
     };
-    
+
     var query = `UPDATE stock SET item = '${data.item}', avail = ${data.avail}, qty_req = ${data.qty_req} WHERE id = ${data.id}`;
-    connection.query(query, (err, results, fields)=>{
-        if(err) throw err;
-        else{
+    connection.query(query, (err, results, fields) => {
+        if (err) throw err;
+        else {
             console.log("Item updated successfully");
             res.redirect("stocks");
         }
     })
-    
+
 });
 
 
-app.post("/logout", (req, res)=>{
+app.post("/logout", (req, res) => {
     req.session.valid = false;
     res.redirect("/");
 })
 
 
-app.listen(3000, ()=>{
+app.listen(3000, () => {
     console.log("server running on port 3000");
 });
