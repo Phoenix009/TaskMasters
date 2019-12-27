@@ -32,10 +32,19 @@
                     <td><%= element.item %></td>
                     <td><%= element.qty %></td>
                     <td><%=element.date_time%></td>
-                    <td class="text-center"><a class='btn btn-success btn-xs' style="margin-right: 2rem;" href="#"><span
-                                class="glyphicon glyphicon-edit"></span><i class="fas fa-check"></i> Accept</a> <a
-                            href="#" class="btn btn-danger btn-xs"><span class="glyphicon glyphicon-remove"></span> <i
-                                class="far fa-trash-alt"></i> Delete</a></td>
+                    <td class="text-center">
+                        <a class='btn btn-success btn-xs' style="margin-right: 2rem;" 
+                        href="/edit_requests/accept/<%= element.req_id %>/<%= element.stock_id %>/<%= element.qty %>">
+                            <span class="glyphicon glyphicon-edit"></span>
+                            <i class="fas fa-check"></i> Accept
+                        </a> 
+
+                        <a class="btn btn-danger btn-xs"
+                        href="/edit_requests/reject/<%= element.req_id %>/<%= element.stock_id %>/<%= element.qty %>">
+                            <span class="glyphicon glyphicon-remove"></span> 
+                            <i class="far fa-trash-alt"></i> Delete
+                        </a>
+                    </td>
                 </tr>
                 <% }); %>
             </tbody>

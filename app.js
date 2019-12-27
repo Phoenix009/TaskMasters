@@ -46,7 +46,7 @@ app.get("/", (req, res)=>{
 
 app.get("/request", (req, res)=>{
     if(req.session.valid){
-        var query = "SELECT fname, lname, item, qty, date_time FROM users \
+        var query = "SELECT requests.id AS req_id, stock.id AS stock_id, fname, lname, item, qty, date_time FROM users \
         JOIN requests ON users.id=user_id \
         JOIN stock on stock_id = stock.id;";
         
@@ -93,7 +93,35 @@ app.get("/stocks", (req, res)=>{
 
 app.get("/edit", (req, res)=>{
     res.render("edit", {err: false});
-})
+});
+
+
+app.get("/edit_requests/:mode/:req_id/:stock_id/:qty", (req, res)=>{
+    var body = req.params;
+    if(body.mode === "accept"){
+        var stockQuery = `UPDATE stock SET avail= avail - ${body.qty} WHERE id=${body.stock_id}`;
+
+        console.log(stockQuery);
+        console.log(reqQuery);
+
+        connection.query(stockQuery, (err, results, fields)=>{
+            if(err) throw err;
+            else{
+                console.log("Stocks updated");
+            }
+        })
+    }
+    
+    var reqQuery = `DELETE FROM requests WHERE id=${body.req_id}`;
+
+    connection.query(reqQuery, (err, results, fields)=>{
+        if(err) throw err;
+        else{
+            console.log("Request deleted");
+        }
+    })
+    res.redirect("/request");
+});
 
 
 //-------------- DEFAULT ROUTE --------------
