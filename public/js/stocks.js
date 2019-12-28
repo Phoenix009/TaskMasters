@@ -3,7 +3,6 @@ var form = $("#additemform");
 form.hide();
 
 
-console.log(savebtn);
 
 
 btn.on("click", ()=>{
