@@ -29,7 +29,7 @@ function passwordMatch(pass, hash) {
 var connection = mysql.createConnection({
     host: "localhost",
     user: "root", //your username
-    password: "phoenix", // password
+    password: "root", // password
     database: "StationeryManager"
 });
 
@@ -157,6 +157,9 @@ app.get("/edit_requests/:mode/:req_id/:stock_id/:qty", (req, res) => {
     res.redirect("/request");
 });
 
+app.get("/user", (req,res)=>{
+    res.render('user');
+});
 
 //-------------- DEFAULT ROUTE --------------
 app.get("*", (req, res) => {
