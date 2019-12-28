@@ -20,7 +20,7 @@
         <table id="myTable" class="table table-list-search table-striped custab">
             <thead>
                 <tr>
-                    <th scope="row">Item Name</th>
+                    <th scope="row">Request ID</th>
                     <th scope="col">Item</th>
                     <th scope="col">Quantity</th>
                     <th scope="col">Timestamp</th>
@@ -30,27 +30,12 @@
             <tbody>
                 <% body.forEach(element => { %>
                 <tr>
-                    <td><%= element.fname + " " + element.lname %></td>
+                    <td><%= element.req_id %></td>
                     <td><%= element.item %></td>
                     <td><%= element.qty %></td>
                     <td><%=element.date_time%></td>
                     <td class="text-center">
-                        <div class="row">
-                            <div class="col-lg-6">
-                                <a class='btn btn-success btn-xs' style="margin-right: 2rem;"
-                                    href="/edit_requests/accept/<%= element.req_id %>/<%= element.stock_id %>/<%= element.qty %>">
-                                    <span class="glyphicon glyphicon-edit"></span>
-                                    <i class="fas fa-check"></i> Accepted
-                                </a>
-                            </div>
-                            <div class="col-lg-6">
-                                <a class="btn btn-danger btn-xs"
-                                    href="/edit_requests/reject/<%= element.req_id %>/<%= element.stock_id %>/<%= element.qty %>">
-                                    <span class="glyphicon glyphicon-remove"></span>
-                                    <i class="far fa-trash-alt"></i> Rejected
-                                </a>
-                            </div>
-                        </div>
+                        <%= element.req_status %>
                     </td>
                 </tr>
                 <% }); %>
