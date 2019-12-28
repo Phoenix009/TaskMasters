@@ -1,11 +1,11 @@
 var btn = $("#additembtn");
 var form = $("#additemform");
 form.hide();
-var savebtn = document.getElementsByClassNameAll("save_button");
+
 
 console.log(savebtn);
 
-// document.getElementById("save_button").style.display="none";
+
 btn.on("click", ()=>{
     btn.slideOut();
     form.slideIn();
