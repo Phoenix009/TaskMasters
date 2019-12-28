@@ -59,7 +59,7 @@ app.get("/request", (req, res) => {
     if (req.session.valid) {
         var query = "SELECT requests.id AS req_id, stock.id AS stock_id, fname, lname, item, qty, date_time FROM users \
         JOIN requests ON users.id=user_id \
-        JOIN stock on stock_id = stock.id;";
+        JOIN stock on stock_id = stock.id WHERE req_status = 0;";
 
         connection.query(query, (err, results, body) => {
             if (err) throw err;
@@ -142,13 +142,16 @@ app.get("/edit_requests/:mode/:req_id/:stock_id/:qty", (req, res) => {
             }
         })
     }
+    var status;
+    if(body.mode === "accept") status = 1;
+    else status = -1;
 
-    var reqQuery = `DELETE FROM requests WHERE id=${body.req_id}`;
+    var reqQuery = `UPDATE requests SET req_status=${status} WHERE id=${body.req_id}`;
 
     connection.query(reqQuery, (err, results, fields) => {
         if (err) throw err;
         else {
-            console.log("Request deleted");
+            console.log("Request Updated");
         }
     })
     res.redirect("/request");
