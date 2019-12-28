@@ -36,5 +36,13 @@ h4{
     margin-left: 1rem;
 }
 
+input {
+    border: none;
+    background: none;
+}
+
+.no-outline:focus{
+    outline:none;
+}
 /* stocks CSS */
 

@@ -29,7 +29,7 @@ function passwordMatch(pass, hash) {
 var connection = mysql.createConnection({
     host: "localhost",
     user: "root", //your username
-    password: "root", // password
+    password: "phoenix", // password
     database: "StationeryManager"
 });
 
@@ -158,7 +158,24 @@ app.get("/edit_requests/:mode/:req_id/:stock_id/:qty", (req, res) => {
 });
 
 app.get("/user", (req,res)=>{
-    res.render('user');
+    var query = `SELECT * FROM stock`;
+    connection.query(query, (err, results, fields)=>{
+        if(err) throw err;
+        else{
+            var params = {
+                "body": results,
+            };
+
+            if(req.session.req_status){
+                params["req_status"] = true;
+            }else{
+                params["req_status"] = false;
+            }
+
+            console.log(params);
+            res.render("user",params);
+        }
+    })
 });
 
 //-------------- DEFAULT ROUTE --------------
@@ -178,10 +195,12 @@ app.post("/login", (req, res) => {
     connection.query(query, (err, results, fields) => {
         if (err) throw err;
         else {
+            console.log(results[0]);
             if (results.length) {
                 if (passwordMatch(password, results[0].pass)) {
                     req.session.valid = true;
                     req.session.email = email;
+                    req.session.user_id = results[0].id;
                     // req.session.id = results[0].id;
                     res.redirect("/request");
                 } else {
@@ -287,6 +306,26 @@ app.post("/edit_stocks", (req, res) => {
         }
     })
 
+});
+
+
+app.post("/make_request", (req, res)=>{
+    console.log(req.session.id)
+    
+    var data = {
+        user_id: Number(req.session.user_id),
+        stock_id: Number(req.body.id),
+        qty: Number(req.body.qty),
+    };
+
+    var query = "INSERT INTO requests SET ?";
+    connection.query(query, data, (err, results, fields)=>{
+        if(err) throw err;
+        else{
+            req.session.req_status = true;
+            res.redirect("user");
+        }
+    })
 });
 
 

@@ -1,5 +1,8 @@
-   
-<%= include('header'); %>
+<!-- HEADER    -->
+<%- include('header'); -%>
+
+<title>User Page</title>
+
 <div class="row head">
     <div class="mainhead col-md-12 row" style="justify-content: center;">
         <div class="col-md-6">
@@ -10,52 +13,60 @@
             <input type="text" class=" form-control" id="myInput" onkeyup="myFunction()"
                 placeholder="Search" /><span></span>
         </div>
-        
+
     </div>
 
 
 </div>
 <div class="container d-flex justify-content-center">
-    <div class="row col-md-8 col-md-offset-1 custyle">
+
+   
+
+    <div class="row col-md-8 col-md-offset-1 custyle d-flex justify-content-center" style="margin-top: 2%">
+
+        <% if(req_status) { %>
+        <div class="alert alert-success" role="alert">
+            Request Made Sussessfully !
+        </div>
+        <% } %> 
+        
+
         <table id="myTable" class="table table-list-search table-striped custab" style="margin-top:3rem;">
-            <thead >
+            <thead>
                 <tr>
                     <th>Sr.no</th>
                     <th>Item Name</th>
                     <th>Quantity</th>
                     <th class="text-center">Action</th>
                 </tr>
-                
+
             </thead>
-            
-            <tbody >
-                
-                
-                <tr>
-                    <td></td>
-                    <td></td>
-                    <td class="placeholder" style="width: 12rem;">
-                        <div class="form-group">
-                            <input name="stock" type="number" class="form-control" 
-                                placeholder="Required Quantity">
-                        </div>
-                    </td>
-                    <td class="text-center">
-                        <div class="row">
-                            <div class="col-lg-12" style="justify-content: center;">
-                                <a class='btn btn-primary btn-xs' style="margin-right: 0rem;"
-                                    href="/edit_requests/accept/<%= element.req_id %>/<%= element.stock_id %>/<%= element.qty %>">
-                                    <span class="glyphicon glyphicon-edit"></span>
-                                    <i class="fas fa-check"></i> Request
-                                </a>
-                            </div>
-                            </div>
-                    </td>
-                </tr>
-                
+            <tbody>
+                <% body.forEach(element => { %>
+                    <form action="/make_request" method="post">
+                        <tr>
+                            <td><input class="no-outline" name="id" type="text" value='<%= element.id %>' readonly></td>
+                            <td><input class="no-outline" name="item" type="text" value='<%= element.item %>' readonly></td>
+                            <td class="placeholder" style="width: 12rem;">
+                                <div class="form-group" id="div<%=element.id%>">
+                                    <input id="qty<%=element.id%>" name="qty" type="number" class="form-control" placeholder="Required Quantity">
+                                </div>
+                            </td>
+                            <td class="text-center">
+                                <div class="row">
+                                    <div class="col-lg-12" style="justify-content: center;">
+                                        <button type="submit" class="btn btn-success" style="display: none;" id = "confirm<%= element.id %>"><i class="fas fa-check"></i>Confirm Request</button>
+                                        <input type="button" class="btn btn-primary" id="request<%= element.id %>" value="Request" class="edit"
+                                        onclick="edit_row('<%= element.id %>')">
+                                    </div>
+                                </div>
+                            </td>
+                        </tr>
+                        </form>
+                    <% }); %>
             </tbody>
         </table>
     </div>
 </div>
 
-<%= include('footer'); %>
+<%- include('footer'); -%>
