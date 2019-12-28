@@ -29,7 +29,7 @@ function passwordMatch(pass, hash) {
 var connection = mysql.createConnection({
     host: "localhost",
     user: "root", //your username
-    password: "root", // password
+    password: "phoenix", // password
     database: "StationeryManager"
 });
 
@@ -115,7 +115,8 @@ app.get("/stocks", (req, res) => {
 app.get("/edit", (req, res) => {
     if (req.session.valid) {
         res.render("edit", {
-            err: false
+            err: false,
+            email: req.session.email,
         });
     } else {
         res.render("index", {
@@ -174,6 +175,7 @@ app.post("/login", (req, res) => {
             if (results.length) {
                 if (passwordMatch(password, results[0].pass)) {
                     req.session.valid = true;
+                    req.session.email = email;
                     // req.session.id = results[0].id;
                     res.redirect("/request");
                 } else {
@@ -197,7 +199,7 @@ app.post("/login", (req, res) => {
 
 app.post("/register", (req, res) => {
     var data = {
-        email: req.body.email,
+        email: req.session.email,
         prev_pass: req.body.prev_password,
         new_pass: req.body.new_password,
         c_pass: req.body.confirm_password,
