@@ -29,7 +29,7 @@ function passwordMatch(pass, hash) {
 var connection = mysql.createConnection({
     host: "localhost",
     user: "root", //your username
-    password: "phoenix", // password
+    password: "root", // password
     database: "StationeryManager"
 });
 
@@ -59,7 +59,7 @@ app.get("/request", (req, res) => {
     if (req.session.valid) {
         var query = "SELECT requests.id AS req_id, stock.id AS stock_id, fname, lname, item, qty, date_time FROM users \
         JOIN requests ON users.id=user_id \
-        JOIN stock on stock_id = stock.id WHERE req_status = 0;";
+        JOIN stock on stock_id = stock.id WHERE req_status = 0 ORDER BY date_time DESC;";
 
         connection.query(query, (err, results, body) => {
             if (err) throw err;
@@ -181,7 +181,8 @@ app.get("/user", (req,res)=>{
 app.get("/summary_user", (req, res)=>{
     var query = `SELECT requests.id AS req_id, item, qty, date_time, req_status FROM users \
         JOIN requests ON users.id=user_id \
-        JOIN stock on stock_id = stock.id WHERE user_id=${req.session.user_id}`;
+        JOIN stock on stock_id = stock.id WHERE user_id=${req.session.user_id}
+        ORDER BY date_time DESC`;
 
         connection.query(query, (err, results, body) => {
             if (err) throw err;
@@ -360,7 +361,6 @@ app.post("/logout", (req, res) => {
     req.session.valid = false;
     res.redirect("/");
 })
-
 
 app.listen(3000, () => {
     console.log("server running on port 3000");
