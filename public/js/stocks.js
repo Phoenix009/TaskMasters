@@ -26,8 +26,8 @@ function edit_row(no)
  var avail_data=avail.innerHTML;
  var Qty_data=qty_req.innerHTML;
 
- id.innerHTML=`<input type='text' name='id'  value ='${id_data}' readonly>`;
- item.innerHTML=`<input type='text' name='item_text'  value ='${item_data}' >`;
- avail.innerHTML=`<input type='text' name='avail_text'  value ='${avail_data}' >`;
- qty_req.innerHTML=`<input type='text' name='qty_text'  value ='${Qty_data}' >`;
+ id.innerHTML=`<input type='text' class=" form-control"  name='id'  value ='${id_data}' readonly>`;
+ item.innerHTML=`<input type='text' class=" form-control"  name='item_text'  value ='${item_data}' >`;
+ avail.innerHTML=`<input type='text' class=" form-control"  name='avail_text'  value ='${avail_data}' >`;
+ qty_req.innerHTML=`<input type='text' class=" form-control"  name='qty_text'  value ='${Qty_data}' >`;
 }
