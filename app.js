@@ -26,15 +26,15 @@ function passwordMatch(pass, hash) {
 }
 
 
+//-------------- CONNECTION --------------
 var connection = mysql.createConnection({
     host: "localhost",
     user: "root", //your username
-    password: "root", // password
+    password: "phoenix", // password
     database: "StationeryManager"
 });
 
 
-//connection
 connection.connect(err => {
     if (err) throw err;
     console.log("Connection established...");
@@ -128,58 +128,67 @@ app.get("/edit", (req, res) => {
 
 
 app.get("/edit_requests/:mode/:req_id/:stock_id/:qty", (req, res) => {
-    var body = req.params;
-    if (body.mode === "accept") {
-        var stockQuery = `UPDATE stock SET avail= avail - ${body.qty} WHERE id=${body.stock_id}`;
+    if(req.session.valid){
+        var body = req.params;
+        if (body.mode === "accept") {
+            var stockQuery = `UPDATE stock SET avail= avail - ${body.qty} WHERE id=${body.stock_id}`;
 
-        console.log(stockQuery);
-        console.log(reqQuery);
+            console.log(stockQuery);
+            console.log(reqQuery);
 
-        connection.query(stockQuery, (err, results, fields) => {
+            connection.query(stockQuery, (err, results, fields) => {
+                if (err) throw err;
+                else {
+                    console.log("Stocks updated");
+                }
+            })
+        }
+        var status;
+        if(body.mode === "accept") status = 1;
+        else status = -1;
+
+        var reqQuery = `UPDATE requests SET req_status=${status} WHERE id=${body.req_id}`;
+
+        connection.query(reqQuery, (err, results, fields) => {
             if (err) throw err;
             else {
-                console.log("Stocks updated");
+                console.log("Request Updated");
             }
         })
+        res.redirect("/request");
+    }else{
+        res.redirect("/");
     }
-    var status;
-    if(body.mode === "accept") status = 1;
-    else status = -1;
-
-    var reqQuery = `UPDATE requests SET req_status=${status} WHERE id=${body.req_id}`;
-
-    connection.query(reqQuery, (err, results, fields) => {
-        if (err) throw err;
-        else {
-            console.log("Request Updated");
-        }
-    })
-    res.redirect("/request");
 });
 
 app.get("/user", (req,res)=>{
-    var query = `SELECT * FROM stock`;
-    connection.query(query, (err, results, fields)=>{
-        if(err) throw err;
-        else{
-            var params = {
-                "body": results,
-            };
+    if(req.session.valid){
+        var query = `SELECT * FROM stock`;
+        connection.query(query, (err, results, fields)=>{
+            if(err) throw err;
+            else{
+                var params = {
+                    "body": results,
+                };
 
-            if(req.session.req_status){
-                params["req_status"] = true;
-            }else{
-                params["req_status"] = false;
+                if(req.session.req_status){
+                    params["req_status"] = true;
+                }else{
+                    params["req_status"] = false;
+                }
+
+                console.log(params);
+                res.render("user",params);
             }
-
-            console.log(params);
-            res.render("user",params);
-        }
-    })
+        })
+    }else{
+        res.redirect("/");
+    }
 });
 
 app.get("/summary_user", (req, res)=>{
-    var query = `SELECT requests.id AS req_id, item, qty, date_time, req_status FROM users \
+    if(req.session.valid){
+        var query = `SELECT requests.id AS req_id, item, qty, date_time, req_status FROM users \
         JOIN requests ON users.id=user_id \
         JOIN stock on stock_id = stock.id WHERE user_id=${req.session.user_id}
         ORDER BY date_time DESC`;
@@ -204,6 +213,9 @@ app.get("/summary_user", (req, res)=>{
                 });
             }
         })
+    }else{
+        res.redirect("/");
+    }
 })
 
 //-------------- DEFAULT ROUTE --------------

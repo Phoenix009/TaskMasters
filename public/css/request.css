@@ -44,5 +44,10 @@ input {
 .no-outline:focus{
     outline:none;
 }
+
+
+h3{
+    opacity: 0.8;
+}
 /* stocks CSS */
 
