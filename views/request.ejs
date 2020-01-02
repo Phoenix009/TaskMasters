@@ -36,13 +36,23 @@
                     <td><%=element.date_time%></td>
                     <td class="text-center">
                         <div class="row">
-                            <div class="col-lg-6">
-                                <a class='btn btn-success btn-xs' style="margin-right: 2rem;"
-                                    href="/edit_requests/accept/<%= element.req_id %>/<%= element.stock_id %>/<%= element.qty %>">
-                                    <span class="glyphicon glyphicon-edit"></span>
-                                    <i class="fas fa-check"></i> Accept
-                                </a>
-                            </div>
+
+                            <% if(element.qty_flag >= 0){%>
+                                <div class="col-lg-6">
+                                    <a class='btn btn-success btn-xs' style="margin-right: 2rem;"
+                                        href="/edit_requests/accept/<%= element.req_id %>/<%= element.stock_id %>/<%= element.qty %>">
+                                        <span class="glyphicon glyphicon-edit"></span>
+                                        <i class="fas fa-check"></i> Accept
+                                    </a>
+                                </div>
+                            <% }else { %>
+                                <div class="col-lg-6">
+                                    <button class='btn btn-success btn-xs' style="margin-right: 2rem;" disabled>
+                                        <span class="glyphicon glyphicon-edit"></span>
+                                        <i class="fas fa-check"></i> Accept
+                                    </button>
+                                </div>
+                            <% } %>
                             <div class="col-lg-6">
                                 <a class="btn btn-danger btn-xs"
                                     href="/edit_requests/reject/<%= element.req_id %>/<%= element.stock_id %>/<%= element.qty %>">

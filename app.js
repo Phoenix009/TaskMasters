@@ -30,7 +30,7 @@ function passwordMatch(pass, hash) {
 var connection = mysql.createConnection({
     host: "localhost",
     user: "root", //your username
-    password: "root", // password
+    password: "phoenix", // password
     database: "StationeryManager"
 });
 
@@ -56,8 +56,8 @@ app.get("/", (req, res) => {
 
 
 app.get("/request", (req, res) => {
-    if (req.session.valid) {
-        var query = "SELECT requests.id AS req_id, stock.id AS stock_id, fname, lname, item, qty, date_time FROM users \
+    if (req.session.valid && req.session.admin) {
+        var query = "SELECT requests.id AS req_id, stock.id AS stock_id, (avail-qty) AS qty_flag, fname, lname, item, qty, date_time FROM users \
         JOIN requests ON users.id=user_id \
         JOIN stock on stock_id = stock.id WHERE req_status = 0 ORDER BY date_time DESC;";
 
@@ -82,6 +82,8 @@ app.get("/request", (req, res) => {
                 });
             }
         })
+    }else if(req.session.valid && !req.session.admin){
+        res.redirect("/user");
     } else {
         res.render("index", {
             "err": false,
@@ -92,7 +94,7 @@ app.get("/request", (req, res) => {
 
 
 app.get("/stocks", (req, res) => {
-    if (req.session.valid) {
+    if (req.session.valid && req.session.admin) {
         var query = "SELECT * FROM stock";
         connection.query(query, (err, results, body) => {
             if (err) throw err;
@@ -103,7 +105,9 @@ app.get("/stocks", (req, res) => {
                 });
             }
         })
-    } else {
+    }else if(req.session.valid && !req.session.admin){
+        res.redirect("/user");
+    }else {
         res.render("index", {
             "err": false,
             "err_msg": ""
@@ -128,7 +132,7 @@ app.get("/edit", (req, res) => {
 
 
 app.get("/edit_requests/:mode/:req_id/:stock_id/:qty", (req, res) => {
-    if(req.session.valid){
+    if(req.session.valid && req.session.admin){
         var body = req.params;
         if (body.mode === "accept") {
             var stockQuery = `UPDATE stock SET avail= avail - ${body.qty} WHERE id=${body.stock_id}`;
@@ -189,11 +193,11 @@ app.get("/user", (req,res)=>{
 
 app.get("/summary/:type", (req, res)=>{
     if(req.session.valid){
-        if(req.params.type === "admin"){
-            var query = `SELECT requests.id AS req_id, item, qty, date_time, req_status FROM users \
+        if(req.params.type === "admin" && req.session.admin){
+            var query = `SELECT requests.id AS req_id, CONCAT(fname, " ", lname) AS name, item, qty, date_time, req_status FROM users \
             JOIN requests ON users.id=user_id \
             JOIN stock on stock_id = stock.id
-            ORDER BY date_time DESC`;
+            ORDER BY date_time ASC`;
 
             var options = {
                 weekday: "short",
@@ -207,12 +211,14 @@ app.get("/summary/:type", (req, res)=>{
             connection.query(query, (err, results, body) => {
                 if (err) throw err;
                 else {
+                    console.log(results);
                     results.forEach(element => {
                         var date = new Date(element.date_time);
                         element.date_time = date.toLocaleDateString("en-US", options);
                     });
                     res.render("summary", {
-                        "body": results
+                        "body": results,
+                        "adminFlag": true,
                     });
                 }
             })
@@ -220,7 +226,7 @@ app.get("/summary/:type", (req, res)=>{
             var query = `SELECT requests.id AS req_id, item, qty, date_time, req_status FROM users \
             JOIN requests ON users.id=user_id \
             JOIN stock on stock_id = stock.id WHERE user_id=${req.session.user_id}
-            ORDER BY date_time DESC`;
+            ORDER BY date_time ASC`;
 
             connection.query(query, (err, results, body) => {
                 if (err) throw err;
@@ -230,7 +236,8 @@ app.get("/summary/:type", (req, res)=>{
                         element.date_time = date.toLocaleDateString("en-US", options);
                     });
                     res.render("summary", {
-                        "body": results
+                        "body": results,
+                        "adminFlag":false,
                     });
                 }
             })
@@ -252,6 +259,7 @@ app.get("*", (req, res) => {
 app.post("/login", (req, res) => {
     email = req.body.email;
     password = req.body.password;
+    adminFlag = req.body.adminFlag;
 
     var query = `SELECT * FROM users WHERE email='${email}';`;
     connection.query(query, (err, results, fields) => {
@@ -263,8 +271,14 @@ app.post("/login", (req, res) => {
                     req.session.valid = true;
                     req.session.email = email;
                     req.session.user_id = results[0].id;
-                    // req.session.id = results[0].id;
-                    res.redirect("/request");
+
+                    if(adminFlag && results[0].admin_flag){
+                        req.session.admin = true;
+                        res.redirect("/request")
+                    }else{
+                        req.session.admin = false;
+                        res.redirect("/user");
+                    }
                 } else {
                     req.session.valid = false;
                     res.render("index", {

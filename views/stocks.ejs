@@ -29,15 +29,15 @@
 
                                 <div class="form-group">
                                     <input name="item" type="text" class="form-control" 
-                                        placeholder="ItemName">
+                                        placeholder="ItemName" required>
                                 </div>
                                 <div class="form-group">
                                     <input name="stock" type="number" class="form-control" 
-                                        placeholder="Stock in hand">
+                                        placeholder="Stock in hand" min="0" required>
                                 </div>
                                 <div class="form-group">
                                     <input name="qty_req" type="number" class="form-control" 
-                                        placeholder="Quantity required">
+                                        placeholder="Quantity required" min="0" required>
                                 </div>
                                 <button type="submit" class="btn btn-primary">Add</button>
                             </form>
