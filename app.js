@@ -187,33 +187,54 @@ app.get("/user", (req,res)=>{
     }
 });
 
-app.get("/summary_user", (req, res)=>{
+app.get("/summary/:type", (req, res)=>{
     if(req.session.valid){
-        var query = `SELECT requests.id AS req_id, item, qty, date_time, req_status FROM users \
-        JOIN requests ON users.id=user_id \
-        JOIN stock on stock_id = stock.id WHERE user_id=${req.session.user_id}
-        ORDER BY date_time DESC`;
+        if(req.params.type === "admin"){
+            var query = `SELECT requests.id AS req_id, item, qty, date_time, req_status FROM users \
+            JOIN requests ON users.id=user_id \
+            JOIN stock on stock_id = stock.id
+            ORDER BY date_time DESC`;
 
-        connection.query(query, (err, results, body) => {
-            if (err) throw err;
-            else {
-                var options = {
-                    weekday: "short",
-                    year: "numeric",
-                    day: "numeric",
-                    hour: "numeric",
-                    minute: "numeric"
-                };
+            var options = {
+                weekday: "short",
+                month: "short",
+                year: "numeric",
+                day: "numeric",
+                hour: "numeric",
+                minute: "numeric"
+            };
 
-                results.forEach(element => {
-                    var date = new Date(element.date_time);
-                    element.date_time = date.toLocaleDateString("en-US", options);
-                });
-                res.render("summary", {
-                    "body": results
-                });
-            }
-        })
+            connection.query(query, (err, results, body) => {
+                if (err) throw err;
+                else {
+                    results.forEach(element => {
+                        var date = new Date(element.date_time);
+                        element.date_time = date.toLocaleDateString("en-US", options);
+                    });
+                    res.render("summary", {
+                        "body": results
+                    });
+                }
+            })
+        }else if(req.params.type === "user"){
+            var query = `SELECT requests.id AS req_id, item, qty, date_time, req_status FROM users \
+            JOIN requests ON users.id=user_id \
+            JOIN stock on stock_id = stock.id WHERE user_id=${req.session.user_id}
+            ORDER BY date_time DESC`;
+
+            connection.query(query, (err, results, body) => {
+                if (err) throw err;
+                else {
+                    results.forEach(element => {
+                        var date = new Date(element.date_time);
+                        element.date_time = date.toLocaleDateString("en-US", options);
+                    });
+                    res.render("summary", {
+                        "body": results
+                    });
+                }
+            })
+        }
     }else{
         res.redirect("/");
     }
