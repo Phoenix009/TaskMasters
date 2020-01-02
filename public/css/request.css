@@ -49,5 +49,24 @@ input {
 h3{
     opacity: 0.8;
 }
+
+#close{
+    float: right;
+    margin-top: 3px;
+    margin-right: 3px;
+    background: none;
+    border: none;
+    color: rgb(0, 118, 0);
+}
+
+.alert-success{
+    border-radius: 4px;
+
+}
+
+.alert-success p{
+    margin: 10px;
+    text-align: center;
+}
 /* stocks CSS */
 

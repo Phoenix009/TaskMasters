@@ -173,6 +173,7 @@ app.get("/user", (req,res)=>{
 
                 if(req.session.req_status){
                     params["req_status"] = true;
+                    req.session.req_status = false;
                 }else{
                     params["req_status"] = false;
                 }

@@ -25,8 +25,9 @@
     <div class="row col-md-8 col-md-offset-1 custyle d-flex justify-content-center" style="margin-top: 2%">
 
         <% if(req_status) { %>
-        <div class="alert alert-success" role="alert">
-            Request Made Sussessfully !
+        <div id="req_msg" class="req_stat_msg alert-success">
+            <!-- <button id="close" onclick="close()"><i class="fas fa-times-circle"></i></button> -->
+            <p>Request Made Sussessfully</p>
         </div>
         <% } %> 
         
@@ -68,5 +69,6 @@
         </table>
     </div>
 </div>
+
 
 <%- include('footer'); -%>
