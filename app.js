@@ -30,7 +30,7 @@ function passwordMatch(pass, hash) {
 var connection = mysql.createConnection({
     host: "localhost",
     user: "root", //your username
-    password: "root", // password
+    password: "phoenix", // password
     database: "StationeryManager"
 });
 
@@ -376,15 +376,19 @@ app.post("/edit_stocks", (req, res) => {
         qty_req: Number(req.body.qty_text),
     };
 
-    var query = `UPDATE stock SET item = '${data.item}', avail = ${data.avail}, qty_req = ${data.qty_req} WHERE id = ${data.id}`;
-    connection.query(query, (err, results, fields) => {
-        if (err) throw err;
-        else {
-            console.log("Item updated successfully");
-            res.redirect("stocks");
-        }
-    })
+    var qry = `SELECT avail FROM stock WHERE id=${data.id}`;
+    connection.query(qry, (err, results, fields)=>{
+        var diff = data.avail - results[0].avail;
 
+        var query = `UPDATE stock SET item = '${data.item}', avail = ${data.avail}, qty_req = ${data.qty_req}, qty_pres = qty_pres + ${diff} WHERE id = ${data.id}`;
+        connection.query(query, (err, results, fields) => {
+            if (err) throw err;
+            else {
+                console.log("Item updated successfully");
+                res.redirect("stocks");
+            }
+        })
+    })
 });
 
 
