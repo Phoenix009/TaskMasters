@@ -30,7 +30,7 @@ function passwordMatch(pass, hash) {
 var connection = mysql.createConnection({
     host: "localhost",
     user: "root", //your username
-    password: "phoenix", // password
+    password: "root", // password
     database: "StationeryManager"
 });
 
@@ -166,7 +166,7 @@ app.get("/edit_requests/:mode/:req_id/:stock_id/:qty", (req, res) => {
 });
 
 app.get("/user", (req,res)=>{
-    if(req.session.valid){
+    if(req.session.valid && !req.session.admin){
         var query = `SELECT * FROM stock`;
         connection.query(query, (err, results, fields)=>{
             if(err) throw err;
@@ -186,7 +186,10 @@ app.get("/user", (req,res)=>{
                 res.render("user",params);
             }
         })
-    }else{
+    }else if(req.session.valid && req.session.admin){
+        res.redirect("/request");
+    }
+    else{
         res.redirect("/");
     }
 });

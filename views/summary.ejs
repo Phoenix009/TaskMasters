@@ -5,7 +5,7 @@
 <%} else {%>
     <%- include('header_user'); -%>
 <% } %>
-
+<div class="container-fluid">
 <div class="row head">
     <div class="mainhead col-md-12 row">
         <div class="col-md-6">
@@ -17,7 +17,7 @@
                 placeholder="Search" /><span></span>
         </div>
     </div>
-
+</div>
 
 </div>
 <div class="container d-flex justify-content-center">
@@ -26,7 +26,9 @@
             <thead>
                 <tr>
                     <th scope="row">Sr no. </th>
+                    <%if(adminFlag){%>
                     <th scope="row">Name</th>
+                    <%}%>
                     <th scope="col">Item</th>
                     <th scope="col">Quantity</th>
                     <th scope="col">Timestamp</th>
@@ -39,7 +41,9 @@
                 <tr>
                     
                     <td><%= srno %></td>
+                    <%if(adminFlag){%>
                     <td><%= element.name %></td>
+                    <%}%>
                     <td><%= element.item %></td>
                     <td><%= element.qty %></td>
                     <td><%=element.date_time%></td>
