@@ -422,18 +422,12 @@ app.post("/export", (req, res) => {
                 header: true
             });
             const csv = json2csvParser.parse(jsonData);
-            var datetime = new Date();
-            var dt = datetime.toISOString().slice(0,10);
             fs.writeFile(__dirname +"/public/downloads/stock.csv", csv, function (error) {
                 if (error) throw error;
-               
             });
             let rs = fs.createReadStream(__dirname + '/public/downloads/stock.csv'); 
             res.attachment("stock.csv"); 
             rs.pipe(res);
-            // path =__dirname +  "/public/downloads/stock.csv";
-            // console.log(path);
-            // res.download(path);
         }
 
     })
