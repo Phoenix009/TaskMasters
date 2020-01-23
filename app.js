@@ -4,6 +4,8 @@ const bodyParser = require("body-parser");
 const mysql = require("mysql");
 const bcrypt = require("bcryptjs");
 const session = require("express-session");
+const Json2csvParser = require("json2csv").Parser;
+const fs = require("fs")
 
 app.set("view engine", "ejs");
 app.use(express.static(__dirname + "/public"));
@@ -30,7 +32,7 @@ function passwordMatch(pass, hash) {
 var connection = mysql.createConnection({
     host: "localhost",
     user: "root", //your username
-    password: "phoenix", // password
+    password: "root", // password
     database: "StationeryManager"
 });
 
@@ -76,13 +78,13 @@ app.get("/request", (req, res) => {
                     var date = new Date(element.date_time);
                     element.date_time = date.toLocaleDateString("en-US", options);
                 });
-                console.log(results);
+                // console.log(results);
                 res.render("request", {
                     "body": results
                 });
             }
         })
-    }else if(req.session.valid && !req.session.admin){
+    } else if (req.session.valid && !req.session.admin) {
         res.redirect("/user");
     } else {
         res.render("index", {
@@ -105,9 +107,9 @@ app.get("/stocks", (req, res) => {
                 });
             }
         })
-    }else if(req.session.valid && !req.session.admin){
+    } else if (req.session.valid && !req.session.admin) {
         res.redirect("/user");
-    }else {
+    } else {
         res.render("index", {
             "err": false,
             "err_msg": ""
@@ -132,7 +134,7 @@ app.get("/edit", (req, res) => {
 
 
 app.get("/edit_requests/:mode/:req_id/:stock_id/:qty", (req, res) => {
-    if(req.session.valid && req.session.admin){
+    if (req.session.valid && req.session.admin) {
         var body = req.params;
         if (body.mode === "accept") {
             var stockQuery = `UPDATE stock SET avail= avail - ${body.qty} WHERE id=${body.stock_id}`;
@@ -148,7 +150,7 @@ app.get("/edit_requests/:mode/:req_id/:stock_id/:qty", (req, res) => {
             })
         }
         var status;
-        if(body.mode === "accept") status = 1;
+        if (body.mode === "accept") status = 1;
         else status = -1;
 
         var reqQuery = `UPDATE requests SET req_status=${status} WHERE id=${body.req_id}`;
@@ -160,43 +162,42 @@ app.get("/edit_requests/:mode/:req_id/:stock_id/:qty", (req, res) => {
             }
         })
         res.redirect("/request");
-    }else{
+    } else {
         res.redirect("/");
     }
 });
 
-app.get("/user", (req,res)=>{
-    if(req.session.valid && !req.session.admin){
+app.get("/user", (req, res) => {
+    if (req.session.valid && !req.session.admin) {
         var query = `SELECT * FROM stock`;
-        connection.query(query, (err, results, fields)=>{
-            if(err) throw err;
-            else{
+        connection.query(query, (err, results, fields) => {
+            if (err) throw err;
+            else {
                 var params = {
                     "body": results,
                 };
 
-                if(req.session.req_status){
+                if (req.session.req_status) {
                     params["req_status"] = true;
                     req.session.req_status = false;
-                }else{
+                } else {
                     params["req_status"] = false;
                 }
 
                 console.log(params);
-                res.render("user",params);
+                res.render("user", params);
             }
         })
-    }else if(req.session.valid && req.session.admin){
+    } else if (req.session.valid && req.session.admin) {
         res.redirect("/request");
-    }
-    else{
+    } else {
         res.redirect("/");
     }
 });
 
-app.get("/summary/:type", (req, res)=>{
-    if(req.session.valid){
-        if(req.params.type === "admin" && req.session.admin){
+app.get("/summary/:type", (req, res) => {
+    if (req.session.valid) {
+        if (req.params.type === "admin" && req.session.admin) {
             var query = `SELECT requests.id AS req_id, CONCAT(fname, " ", lname) AS name, item, qty, date_time, req_status FROM users \
             JOIN requests ON users.id=user_id \
             JOIN stock on stock_id = stock.id
@@ -225,7 +226,7 @@ app.get("/summary/:type", (req, res)=>{
                     });
                 }
             })
-        }else if(req.params.type === "user"){
+        } else if (req.params.type === "user") {
             var query = `SELECT requests.id AS req_id, item, qty, date_time, req_status FROM users \
             JOIN requests ON users.id=user_id \
             JOIN stock on stock_id = stock.id WHERE user_id=${req.session.user_id}
@@ -240,12 +241,12 @@ app.get("/summary/:type", (req, res)=>{
                     });
                     res.render("summary", {
                         "body": results,
-                        "adminFlag":false,
+                        "adminFlag": false,
                     });
                 }
             })
         }
-    }else{
+    } else {
         res.redirect("/");
     }
 })
@@ -275,10 +276,10 @@ app.post("/login", (req, res) => {
                     req.session.email = email;
                     req.session.user_id = results[0].id;
 
-                    if(adminFlag && results[0].admin_flag){
+                    if (adminFlag && results[0].admin_flag) {
                         req.session.admin = true;
                         res.redirect("/request")
-                    }else{
+                    } else {
                         req.session.admin = false;
                         res.redirect("/user");
                     }
@@ -377,7 +378,7 @@ app.post("/edit_stocks", (req, res) => {
     };
 
     var qry = `SELECT avail FROM stock WHERE id=${data.id}`;
-    connection.query(qry, (err, results, fields)=>{
+    connection.query(qry, (err, results, fields) => {
         var diff = data.avail - results[0].avail;
 
         var query = `UPDATE stock SET item = '${data.item}', avail = ${data.avail}, qty_req = ${data.qty_req}, qty_pres = qty_pres + ${diff} WHERE id = ${data.id}`;
@@ -392,9 +393,9 @@ app.post("/edit_stocks", (req, res) => {
 });
 
 
-app.post("/make_request", (req, res)=>{
+app.post("/make_request", (req, res) => {
     console.log(req.session.id)
-    
+
     var data = {
         user_id: Number(req.session.user_id),
         stock_id: Number(req.body.id),
@@ -402,14 +403,36 @@ app.post("/make_request", (req, res)=>{
     };
 
     var query = "INSERT INTO requests SET ?";
-    connection.query(query, data, (err, results, fields)=>{
-        if(err) throw err;
-        else{
+    connection.query(query, data, (err, results, fields) => {
+        if (err) throw err;
+        else {
             req.session.req_status = true;
             res.redirect("user");
         }
     })
 });
+
+app.post("/export", (req, res) => {
+    var query = "SELECT id, item, qty_prev as 'Previous semester', avail as Available, qty_req as 'Quantity Required', qty_pres as 'Quantity present' FROM stock";
+    connection.query(query, (err, results, body) => {
+        if (err) throw err;
+        else {
+            var jsonData = JSON.parse(JSON.stringify(results));
+            const json2csvParser = new Json2csvParser({
+                header: true
+            });
+            const csv = json2csvParser.parse(jsonData);
+            var datetime = new Date();
+            var dt = datetime.toISOString().slice(0,10);
+            fs.writeFile(dt + ".csv", csv, function (error) {
+                if (error) throw error;
+                console.log("Write to bezkoder_mysql_fs.csv successfully!");
+            });
+            res.redirect("/stocks")
+        }
+
+    })
+})
 
 
 app.post("/logout", (req, res) => {
