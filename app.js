@@ -46,7 +46,7 @@ connection.connect(err => {
 //-------------- GET ROUTES --------------
 app.get("/", (req, res) => {
     try {
-        if (req.session.valid) {}
+        if (req.session.valid) { }
     } catch (err) {
         req.session.valid = false;
     }
@@ -423,16 +423,42 @@ app.post("/export", (req, res) => {
                 header: true
             });
             const csv = json2csvParser.parse(jsonData);
-            fs.writeFile(__dirname +"/public/downloads/stock.csv", csv, function (error) {
+            fs.writeFile(__dirname + "/public/downloads/stock.csv", csv, function (error) {
                 if (error) throw error;
             });
-            let rs = fs.createReadStream(__dirname + '/public/downloads/stock.csv'); 
-            res.attachment("stock.csv"); 
+            let rs = fs.createReadStream(__dirname + '/public/downloads/stock.csv');
+            res.attachment("stock.csv");
             rs.pipe(res);
         }
 
     })
 });
+
+app.post("/reset", (req, res) => {
+    var query = "SELECT id, item, qty_prev as 'Previous semester', avail as 'Available', qty_req as 'Quantity Required', qty_pres as 'Quantity present' FROM stock";
+    connection.query(query, (err, results, body) => {
+        if (err) throw err;
+        else {
+            var jsonData = JSON.parse(JSON.stringify(results));
+            const json2csvParser = new Json2csvParser({
+                header: true
+            });
+            const csv = json2csvParser.parse(jsonData);
+            fs.writeFile(__dirname + "/public/downloads/stock.csv", csv, function (error) {
+                if (error) throw error;
+            });
+
+            var query = "UPDATE stock SET qty_prev = qty_pres, qty_pres = 0, avail=0, qty_req=0";
+            connection.query(query, (err, results, body) => {
+                if (err) throw err;
+            });
+            let rs = fs.createReadStream(__dirname + '/public/downloads/stock.csv');
+            res.attachment("stock.csv");
+            rs.pipe(res);
+        }
+    });
+
+})
 
 
 app.post("/logout", (req, res) => {
