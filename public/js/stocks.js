@@ -28,3 +28,12 @@ function edit_row(no)
  avail.innerHTML=`<input type='number' class=" form-control"  name='avail_text'  value ='${avail_data}' min="0">`;
  qty_req.innerHTML=`<input type='number' class=" form-control"  name='qty_text'  value ='${Qty_data}' min="0">`;
 }
+
+
+function on() {
+    document.getElementById("overlay").style.display = "block";
+  }
+  
+  function off() {
+    document.getElementById("overlay").style.display = "none";
+  }

@@ -1,5 +1,5 @@
 "id","item","Previous semester","Available","Quantity Required","Quantity present"
-1,"Long Register (140 Pages)",12,5,0,0
+1,"Long Register (140 Pages)",12,10,0,5
 2,"Long Register (68 Pages)",24,10,0,0
 3,"A4 Size Printing Paper (Ream)",24,2,24,0
 4,"Blank Plan Paper (for Rough Workset of 12 paper)",0,0,0,0
@@ -85,3 +85,4 @@
 84,"watercooler milton 7 lit",0,0,5,0
 85,"Brown Big Envelop for Test Papers",0,0,50,0
 86,"Mouse and Rat Glue Pad",0,0,5,0
+87,"Chalk",0,30,0,30

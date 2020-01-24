@@ -414,7 +414,7 @@ app.post("/make_request", (req, res) => {
 });
 
 app.post("/export", (req, res) => {
-    var query = "SELECT id, item, qty_prev as 'Previous semester', avail as Available, qty_req as 'Quantity Required', qty_pres as 'Quantity present' FROM stock";
+    var query = "SELECT id, item, qty_prev as 'Previous semester', avail as 'Available', qty_req as 'Quantity Required', qty_pres as 'Quantity present' FROM stock";
     connection.query(query, (err, results, body) => {
         if (err) throw err;
         else {
@@ -432,7 +432,7 @@ app.post("/export", (req, res) => {
         }
 
     })
-})
+});
 
 
 app.post("/logout", (req, res) => {
