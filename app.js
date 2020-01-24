@@ -423,13 +423,12 @@ app.post("/export", (req, res) => {
                 header: true
             });
             const csv = json2csvParser.parse(jsonData);
-            var datetime = new Date();
-            var dt = datetime.toISOString().slice(0,10);
-            fs.writeFile(dt + ".csv", csv, function (error) {
+            fs.writeFile(__dirname +"/public/downloads/stock.csv", csv, function (error) {
                 if (error) throw error;
-                console.log("Write to bezkoder_mysql_fs.csv successfully!");
             });
-            res.redirect("/stocks")
+            let rs = fs.createReadStream(__dirname + '/public/downloads/stock.csv'); 
+            res.attachment("stock.csv"); 
+            rs.pipe(res);
         }
 
     })
