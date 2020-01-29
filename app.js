@@ -59,7 +59,7 @@ app.get("/", (req, res) => {
 
 app.get("/request", (req, res) => {
     if (req.session.valid && req.session.admin) {
-        var query = "SELECT requests.id AS req_id, stock.id AS stock_id, (avail-qty) AS qty_flag, fname, lname, item, qty, date_time FROM users \
+        var query = "SELECT requests.id AS req_id, stock.id AS stock_id, (avail-qty) AS qty_flag, user_id, avail, fname, lname, item, qty, date_time FROM users \
         JOIN requests ON users.id=user_id \
         JOIN stock on stock_id = stock.id WHERE req_status = 0 ORDER BY date_time DESC;";
 
@@ -102,7 +102,6 @@ app.get("/stocks", (req, res) => {
         connection.query(query, (err, results, body) => {
             if (err) throw err;
             else {
-                console.log(results);
                 res.render("stocks", {
                     "body": results
                 });
@@ -134,32 +133,49 @@ app.get("/edit", (req, res) => {
 });
 
 
-app.get("/edit_requests/:mode/:req_id/:stock_id/:qty", (req, res) => {
+app.get("/edit_requests/:mode/:req_id/:stock_id/:user_id/:qty", (req, res) => {
     if (req.session.valid && req.session.admin) {
         var body = req.params;
-        if (body.mode === "accept") {
-            var stockQuery = `UPDATE stock SET avail= avail - ${body.qty} WHERE id=${body.stock_id}`;
+        var stockQuery = `UPDATE stock SET avail= avail - ${body.qty} WHERE id=${body.stock_id}`;
 
-            console.log(stockQuery);
-            console.log(reqQuery);
-
-            connection.query(stockQuery, (err, results, fields) => {
-                if (err) throw err;
-                else {
-                    console.log("Stocks updated");
-                }
-            })
-        }
-        var status;
-        if (body.mode === "accept") status = 1;
-        else status = -1;
-
-        var reqQuery = `UPDATE requests SET req_status=${status} WHERE id=${body.req_id}`;
-
-        connection.query(reqQuery, (err, results, fields) => {
+        connection.query(stockQuery, (err, results, fields) => {
             if (err) throw err;
             else {
-                console.log("Request Updated");
+                console.log("Stocks updated");
+            }
+        })
+        
+        console.log("I am getting here")
+        var reqQuery = `SELECT qty AS 'qty' FROM requests WHERE id = ${body.req_id}`;
+        connection.query(reqQuery, (err, results, fields)=>{
+            if(err) throw err
+            else{
+                console.log(results[0].qty);
+                if(results[0].qty > body.qty){
+                    var resQty = results[0].qty;
+                    var query = `UPDATE requests SET qty=qty-${body.qty} WHERE id=${body.req_id}`;
+                    connection.query(query, (err, results, fields)=>{
+                        if(err) throw err;
+                        else{
+                            var query = `INSERT INTO requests(user_id, stock_id, qty, req_status) VALUES (${body.user_id}, ${body.stock_id}, ${body.qty}, ${1})`;
+                            connection.query(query, (err, results, fields)=>{
+                                if(err) throw err;
+                                else{
+                                    console.log("Done with the request update");
+                                }
+                            })
+                        }
+                    })
+                }else{
+                    var reqQuery = `UPDATE requests SET req_status=${1} WHERE id=${body.req_id}`;
+                    connection.query(reqQuery, (err, results, fields) => {
+                        if (err) throw err;
+                        else {
+                            console.log("Request Updated");
+                        }
+                    })
+                }
+                
             }
         })
         res.redirect("/request");
@@ -185,7 +201,6 @@ app.get("/user", (req, res) => {
                     params["req_status"] = false;
                 }
 
-                console.log(params);
                 res.render("user", params);
             }
         })
@@ -202,7 +217,7 @@ app.get("/summary/:type", (req, res) => {
             var query = `SELECT requests.id AS req_id, CONCAT(fname, " ", lname) AS name, item, qty, date_time, req_status FROM users \
             JOIN requests ON users.id=user_id \
             JOIN stock on stock_id = stock.id
-            ORDER BY date_time ASC`;
+            ORDER BY date_time DESC`;
 
             var options = {
                 weekday: "short",
@@ -216,7 +231,6 @@ app.get("/summary/:type", (req, res) => {
             connection.query(query, (err, results, body) => {
                 if (err) throw err;
                 else {
-                    console.log(results);
                     results.forEach(element => {
                         var date = new Date(element.date_time);
                         element.date_time = date.toLocaleDateString("en-US", options);
@@ -270,7 +284,6 @@ app.post("/login", (req, res) => {
     connection.query(query, (err, results, fields) => {
         if (err) throw err;
         else {
-            console.log(results[0]);
             if (results.length) {
                 if (passwordMatch(password, results[0].pass)) {
                     req.session.valid = true;
@@ -395,7 +408,6 @@ app.post("/edit_stocks", (req, res) => {
 
 
 app.post("/make_request", (req, res) => {
-    console.log(req.session.id)
 
     var data = {
         user_id: Number(req.session.user_id),

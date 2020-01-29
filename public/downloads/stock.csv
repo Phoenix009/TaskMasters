@@ -1,9 +1,9 @@
 "id","item","Previous semester","Available","Quantity Required","Quantity present"
-1,"Long Register (140 Pages)",10,20,0,20
+1,"Long Register (140 Pages)",30,10,0,20
 2,"Long Register (68 Pages)",0,0,0,0
 3,"A4 Size Printing Paper (Ream)",0,0,0,0
 4,"Blank Plan Paper (for Rough Workset of 12 paper)",0,0,0,0
-5,"Dot Matrix Printing Paper",0,0,0,0
+5,"Dot Matrix Printing Paper",15,0,0,0
 6,"Chalk Box (White)dustless ",0,0,0,0
 7,"Chalk Box (Colour)dustless",0,0,0,0
 8,"Chalk Duster green Board (for class room use)",0,0,0,0
@@ -20,7 +20,7 @@
 19,"Permanent Marker",0,0,0,0
 20,"Sketch Pen",0,0,0,0
 21,"Tracperancy Marker(( Blue-5,Red-5)",0,0,0,0
-22,"Ball Pen (Red)",0,0,0,0
+22,"Ball Pen (Red)",75,0,0,0
 23,"Ball Pen (Black)",0,0,0,0
 24,"Ball Pen (Blue)",0,0,0,0
 25,"Highlighter Diff. Colour",0,0,0,0
@@ -85,4 +85,3 @@
 84,"watercooler milton 7 lit",0,0,0,0
 85,"Brown Big Envelop for Test Papers",0,0,0,0
 86,"Mouse and Rat Glue Pad",0,0,0,0
-87,"Chalk",0,0,0,0
